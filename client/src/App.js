@@ -6,6 +6,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import roomReducer from './logic/roomLogic/roomReducer'
 import userReducer from './logic/userLogic/userReducer'
 import { AppRouter } from './AppRouter';
+import { Global } from './assets/styles/Global';
 
 
 
@@ -22,6 +23,7 @@ const store = configureStore({
 function App() {
    return (
       <Provider store={store}>
+         <Global/>
          <AppRouter />
       </Provider>
    );

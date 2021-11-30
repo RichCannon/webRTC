@@ -8,6 +8,8 @@ import RegisterPage from "./pages/RegisterPage/RegisterPage";
 import { STORAGE_NAME, userActions } from './logic/userLogic/userReducer'
 import { currentUser } from "./logic/userLogic/userSelector";
 import { PrivateRouter } from './pages/PrivateRouter/PrivateRouter';
+import { Preloader } from './components/Preloader/Preloader';
+import { Layout } from './components/Layout/Layout';
 
 
 
@@ -29,18 +31,21 @@ export const AppRouter = () => {
 
    return (
       <BrowserRouter>
-         {isReady ?
-            <>
-               {token && userId
-                  ? <PrivateRouter />
-                  : <Switch>
-                     <Route exact path={'/login'} component={LoginPage} />
-                     <Route exact path={'/register'} component={RegisterPage} />
-                     <Redirect to={'/login'} />
-                  </Switch>
+            <Layout>
+               {isReady ?
+                  <>
+                     {token && userId
+                        ? <PrivateRouter />
+                        : <Switch>
+                           <Route exact path={'/login'} component={LoginPage} />
+                           <Route exact path={'/register'} component={RegisterPage} />
+                           <Redirect to={'/login'} />
+                        </Switch>
+                     }
+                  </>
+                  : <Preloader />
                }
-            </>
-            : <div>Loading...</div>}
+            </Layout>
       </BrowserRouter>
    )
 }
