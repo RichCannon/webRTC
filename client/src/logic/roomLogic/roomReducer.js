@@ -24,39 +24,51 @@ const initialState = {
 
 export const createRoomRequest = createAsyncThunk(
    'room/createRoomRequest',
-   async (roomData, { getState }) => {
-      const token = getState().user.currentUser.token
-      const response = await api.postCreateRoom({
-         body: roomData,
-         headers: { authorization: `Bearer ${token}` }
-      })
-      return response
+   async (roomData, { getState, rejectWithValue }) => {
+      try {
+         const token = getState().user.currentUser.token
+         const response = await api.postCreateRoom({
+            body: roomData,
+            headers: { authorization: `Bearer ${token}` }
+         })
+         return response
+      } catch (e) {
+         return rejectWithValue(e)
+      }
    }
 )
 
 export const checkRoomRequest = createAsyncThunk(
    'room/checkRoomRequest',
-   async ({ roomId }, { getState }) => {
-      const token = getState().user.currentUser.token
-      console.log(123123)
-      const response = await api.getCheckRoom({
-         params: { roomId },
-         headers: { authorization: `Bearer ${token}` }
-      })
-      return response
+   async ({ roomId }, { getState, rejectWithValue }) => {
+      try {
+         const token = getState().user.currentUser.token
+         console.log(123123)
+         const response = await api.getCheckRoom({
+            params: { roomId },
+            headers: { authorization: `Bearer ${token}` }
+         })
+         return response
+      } catch (e) {
+         return rejectWithValue(e)
+      }
    }
 )
 
 export const enterRoomPassRequest = createAsyncThunk(
    'room/enterRoomPassRequest',
-   async ({ roomId, password }, { getState }) => {
-      const token = getState().user.currentUser.token
-      const response = await api.postEnterRoomPass({
-         params: { roomId },
-         body: { password },
-         headers: { authorization: `Bearer ${token}` }
-      })
-      return response
+   async ({ roomId, password }, { getState, rejectWithValue }) => {
+      try {
+         const token = getState().user.currentUser.token
+         const response = await api.postEnterRoomPass({
+            params: { roomId },
+            body: { password },
+            headers: { authorization: `Bearer ${token}` }
+         })
+         return response
+      } catch (e) {
+         return rejectWithValue(e)
+      }
    }
 )
 

@@ -1,22 +1,21 @@
 import ReactDOM from "react-dom"
 
-import styles from "./Modal.module.css"
+import * as Styles from './ModalStyles'
 
 
 const stopPropagation = (e) => e.stopPropagation()
 
 const Modal = ({ isVisible, onDissmissClick, children }) => {
 
-
    if (!isVisible) return null
 
    return (
       ReactDOM.createPortal(
-         <div className={styles.container} onClick={onDissmissClick}>
+         <Styles.Container  onClick={onDissmissClick}>
             <div onClick={stopPropagation}>
                {children}
             </div>
-         </div>,
+         </Styles.Container>,
          document.getElementById('portal'))
    )
 }

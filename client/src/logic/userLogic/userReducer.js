@@ -17,26 +17,36 @@ const initialState = {
 
 export const registerUserRequest = createAsyncThunk(
    'user/registerUserRequest',
-   async (userData) => {
-      const response = await api.postRegisterUser({ body: userData })
-      return response
+   async (userData, { rejectWithValue }) => {
+      try {
+         return await api.postRegisterUser({ body: userData })
+      } catch (e) {
+         return rejectWithValue(e)
+      }
    }
 )
 
 export const loginUserRequest = createAsyncThunk(
    'user/loginUserRequest',
-   async (userData) => {
-      const response = await api.postLoginUser({ body: userData })
-      return response
+   async (userData, { rejectWithValue }) => {
+      try {
+         return await api.postLoginUser({ body: userData })
+      } catch (e) {
+         return rejectWithValue(e)
+      }
    }
 )
 
 export const getMyUserDataRequest = createAsyncThunk(
    'user/getMyUserDataRequest',
-   async (_, { getState }) => {
-      const token = getState().user.currentUser.token
-      const response = await api.getMyUserData({ headers: { authorization: `Bearer ${token}` } })
-      return response
+   async (_, { getState, rejectWithValue }) => {
+      try {
+         const token = getState().user.currentUser.token
+         return await api.getMyUserData({ headers: { authorization: `Bearer ${token}` } })
+      } catch (e) {
+         return rejectWithValue(e)
+      }
+
    }
 )
 

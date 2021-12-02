@@ -1,3 +1,7 @@
+import { MyButton } from '../MyButton/MyButton'
+import { MyInput } from '../MyInput/MyInput'
+import * as Styles from './EnterPassSceneStyles'
+
 const EnterPassScene = ({ roomValues, onChange, onSendRoomPasswordClick, isDisabled }) => {
 
    const onChangeHandler = e => {
@@ -7,14 +11,16 @@ const EnterPassScene = ({ roomValues, onChange, onSendRoomPasswordClick, isDisab
    }
 
    return (
-      <div>
-         <h1>{`Enter room password`}</h1>
-         <input name={`password`}
-            placeholder={`Password`}
-            value={roomValues[`password`]}
-            onChange={onChangeHandler} />
-         <button disabled={isDisabled} onClick={onSendRoomPasswordClick} >{`SEND PASSWORD`}</button>
-      </div>
+      <Styles.Container>
+         <Styles.Wrapper>
+            <Styles.H1>{`Enter room password`}</Styles.H1>
+            <MyInput name={`password`}
+               placeholder={`Password`}
+               value={roomValues[`password`]}
+               onChange={onChangeHandler} />
+            <MyButton label={`Send password`} disabled={isDisabled} onClick={onSendRoomPasswordClick} />
+         </Styles.Wrapper>
+      </Styles.Container>
    )
 }
 

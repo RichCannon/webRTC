@@ -8,8 +8,12 @@ const router = Router()
 
 router.post(`/login`, async (req, res) => {
    try {
-      const data = req.body
-      const user = await User.findOne(data)
+      const { login, password } = req.body
+      const user = await User.findOne({ userName: login })
+      
+      if(password !== user.password) {
+         return res.status(400).json({ message: `Password isn't correct` })
+      }
 
       if (!user) {
          return res.status(400).json({ message: `User not found` })
@@ -35,7 +39,7 @@ router.post(`/register`, async (req, res) => {
    try {
       const data = req.body
       const user = await User.create(data)
-      return res.json(user) 
+      return res.json(user)
 
    } catch (e) {
       console.error(e)

@@ -2,7 +2,7 @@ import { useContext } from "react"
 import { useSelector } from "react-redux"
 import { useParams } from "react-router"
 
-import { VideosWrapper } from "./RoomPageStyles"
+import * as Styles from "./RoomPageStyles"
 
 import { Preloader } from "../../components/Preloader/Preloader"
 import withPassword from "../../hocs/withPassword/withPassword"
@@ -18,27 +18,15 @@ const RoomPage = () => {
    const { clients, provideMediaRef, usersInRoom } = useWebRTC({ roomID, socket })
 
    const { data: myUserData, fetching: myUserDataFetching } = useSelector(myUserDataSelector)
-   // const videoLayout = layout(clients.length)
-
-   console.log(`myUserData`, myUserData)
-
+   
    return (
-      <div style={{
-         display: `flex`,
-         flexWrap: `wrap`,
-         flexDirection: `column`,
-         alignItems: `center`,
-      }}>
+      <Styles.Container>
          <h1>{roomID}</h1>
          {myUserDataFetching || !myUserData
             ? <Preloader />
-            : <VideosWrapper>
+            : <Styles.VideosWrapper>
                {clients.map((clientID) => (
-                  <div key={clientID} style={{
-                     display: `flex`,
-                     width: `40vw`,
-                     flexDirection: `column`
-                  }} >
+                  <Styles.VideoCard >
                      <video
                         width={`100%`}
                         height={`100%`}
@@ -47,11 +35,11 @@ const RoomPage = () => {
                         playsInline
                         muted={clientID === LOCAL_VIDEO} />
                      <div>{clientID === LOCAL_VIDEO ? (myUserData.userName || `Loading...`) : usersInRoom[clientID]}</div>
-                  </div>
+                  </Styles.VideoCard>
                ))}
-            </VideosWrapper>
+            </Styles.VideosWrapper>
          }
-      </div>
+      </Styles.Container>
    )
 }
 

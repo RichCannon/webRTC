@@ -2,9 +2,11 @@ import { useState } from 'react'
 import { useDispatch } from 'react-redux'
 
 import { Link } from 'react-router-dom'
+import { MyButton } from '../../components/MyButton/MyButton'
+import { MyInput } from '../../components/MyInput/MyInput'
 
 import { registerUserRequest } from '../../logic/userLogic/userReducer'
-import styles from './RegisterPage.module.css'
+import * as Styles from './RegisterPageStyles'
 
 const RegisterPage = () => {
    const [registerValues, setRegisterValues] = useState({})
@@ -30,14 +32,18 @@ const RegisterPage = () => {
    }
 
    return (
-      <div className={styles.container}>
-         <h1>Register page</h1>
-         <input placeholder={"Login"} name={"login"} value={registerValues["login"]} onChange={onChangeHandler} />
-         <input placeholder={"Password"} name={"password"} value={registerValues["password"]} onChange={onChangeHandler} />
-         <input placeholder={"Repeat password"} name={"repeatPassword"} value={registerValues["repeatPassword"]} onChange={onChangeHandler} />
-         <button onClick={onRegisterClick}>{`REGISTER`}</button>
-         <Link to={`/login`}>{`Already have account?`}</Link>
-      </div>
+      <Styles.Container>
+         <Styles.Wrapper>
+            <Styles.H1>{`Register to Seer`}</Styles.H1>
+            <MyInput placeholder={"Login"} name={"login"} value={registerValues["login"]} onChange={onChangeHandler} />
+            <MyInput placeholder={"Password"} name={"password"} value={registerValues["password"]} onChange={onChangeHandler} />
+            <MyInput placeholder={"Repeat password"} name={"repeatPassword"} value={registerValues["repeatPassword"]} onChange={onChangeHandler} />
+            <MyButton label={`Register`} onClick={onRegisterClick}/>
+            <Styles.LinkToRegister>
+               <Link to={`/login`}>{`Already have account? Click to login!`}</Link>
+            </Styles.LinkToRegister>
+         </Styles.Wrapper>
+      </Styles.Container>
    )
 }
 

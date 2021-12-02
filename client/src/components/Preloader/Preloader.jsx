@@ -1,7 +1,7 @@
-export const Preloader = () => {
+import * as Styles from './PreloaderStyles'
+
+export const Preloader = ({ size = `1rem`}) => {
    return (
-      <div style={{ display: `flex`, flex: 1, justifyContent: `center`, alignItems: `center` }}>
-         Loading...
-      </div>
+      <Styles.Container size={size}><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></Styles.Container>
    )
 }

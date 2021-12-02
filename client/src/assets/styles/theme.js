@@ -9,6 +9,7 @@ const xs = `(max-width: 0px)`
 export const theme = {
    colors: {
       primary: `#181818`,
+      secondary: `#f2f2f2`,
       error: `#e43f3f`,
       ok: `#4BCFA0`,
       white: `#fff`,
@@ -23,4 +24,4 @@ export const theme = {
       sm,
       xs
    }
-} 
+}

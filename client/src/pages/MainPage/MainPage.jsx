@@ -1,18 +1,17 @@
 import { useState, useEffect, useRef, useContext } from 'react'
 import { useHistory } from 'react-router'
-import { v4 } from 'uuid'
 
-import styles from './MainPage.module.css'
 import Modal from '../../components/Modal/Modal'
 import CreateRoomModal from '../../components/CreateRoomModal/CreateRoomModal'
-//import socket from "../../socket/index.js"
 import ACTIONS from '../../common/socket/actions'
 import { useDispatch, useSelector } from 'react-redux'
 import { createRoomRequest } from '../../logic/roomLogic/roomReducer'
-import { getMyUserDataRequest, STORAGE_NAME, userActions } from '../../logic/userLogic/userReducer'
-import { myUserDataSelector } from '../../logic/userLogic/userSelector'
+import { STORAGE_NAME, userActions } from '../../logic/userLogic/userReducer'
 import { SocketContext } from '../../hooks/useSocket'
-import { Preloader } from '../../components/Preloader/Preloader'
+import * as Styles from './MainPagesStyles'
+import { MyButton } from '../../components/MyButton/MyButton'
+import { createRoomSelector } from '../../logic/roomLogic/roomSelector'
+import RoomList from './components/RoomList/RoomList'
 
 
 
@@ -23,19 +22,15 @@ const MainPage = () => {
 
    const [createRoomValues, setCreateRoomValues] = useState({})
    const [isVisible, setIsVisible] = useState(false)
-   const dispatch = useDispatch()
-   const { data: myUserData, fetching: myUserDataFetching } = useSelector(myUserDataSelector)
-
-   const history = useHistory()
    const [rooms, updateRooms] = useState([])
+   const { fetching: createRoomFetching } = useSelector(createRoomSelector)
+   const dispatch = useDispatch()
+   const history = useHistory()
    const rootNode = useRef()
 
    const onChangeHandler = ({ name, value }) => {
       setCreateRoomValues((values) => ({ ...values, [name]: value }))
    }
-   console.log(`Main page`)
-
-
 
    useEffect(() => {
       // Get all available rooms
@@ -46,6 +41,12 @@ const MainPage = () => {
          }
       })
    }, [socket])
+
+   useEffect(() => {
+      if (!isVisible) {
+         setCreateRoomValues({})
+      }
+   }, [isVisible])
 
    // Creating new room
    const roomHandler = ({ roomId }) => {
@@ -80,28 +81,21 @@ const MainPage = () => {
       localStorage.removeItem(STORAGE_NAME)
    }
 
-   // console.log(`rooms: `, rooms)
 
    return (
-      <div ref={rootNode}>
-         <>
-            <h1>{`Available Rooms`}</h1>
-            <ul>
-               {rooms.map(roomId => (
-                  <li key={roomId}>
-                     {roomId}
-                     <button onClick={() => roomHandler({ roomId })}>{`JOIN ROOM`}</button>
-                  </li>
-               ))}
-            </ul>
-            <button onClick={onCreateRoomClick}>{`CREATE NEW ROOM`}</button>
-            <Modal onDissmissClick={onDissmissClick} isVisible={isVisible}>
-               <CreateRoomModal onAcceptClick={onAcceptClick} values={createRoomValues} onChangeHandler={onChangeHandler} />
-            </Modal>
-            <button onClick={onLogOutClick}>{`LOG OUT`}</button>
-         </>
-
-      </div>
+      <Styles.Container ref={rootNode}>
+         <Styles.H1>{`Available rooms`}</Styles.H1>
+         <MyButton label={`Create new room`} onClick={onCreateRoomClick} />
+         <RoomList rooms={rooms} roomHandler={roomHandler} />
+         <Modal onDissmissClick={onDissmissClick} isVisible={isVisible}>
+            <CreateRoomModal
+               fetching={createRoomFetching}
+               onAcceptClick={onAcceptClick}
+               values={createRoomValues}
+               onChangeHandler={onChangeHandler} />
+         </Modal>
+         <MyButton label={`Logout`} onClick={onLogOutClick} />
+      </Styles.Container>
    )
 }
 

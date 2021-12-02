@@ -25,7 +25,6 @@ const PrivateRouter = () => {
    const { data: myUserData, fetching: myUserDataFetching } = useSelector(myUserDataSelector)
 
    useEffect(() => {
-      console.log(`Req my user data`)
       if (!myUserData) {
          dispatch(getMyUserDataRequest())
       }

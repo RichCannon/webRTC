@@ -21,58 +21,43 @@ const DEFAULT_HEADERS = {
    "content-type": "application/json"
 }
 
+const fetchInstance = async ({ url, method = METHODS.GET, body = null, headers = {} }) => {
+   const options = {
+      method,
+      headers: { ...DEFAULT_HEADERS, ...headers },
+   }
+
+   if (body) {
+      options.body = JSON.stringify(body)
+   }
+
+   const response = await fetch(url, options)
+   if (!response.ok) {
+      throw await response.json()
+   }
+   return await response.json()
+}
+
 
 
 const api = {
    postRegisterUser: async ({ body }) => {
-      const jsonBody = JSON.stringify(body)
-      const response = await fetch(USER_URL + REGISTER_URL, {
-         method: METHODS.POST,
-         body: jsonBody,
-         headers: DEFAULT_HEADERS,
-      })
-      return await response.json()
+      return await fetchInstance({ url: USER_URL + REGISTER_URL, method: METHODS.POST, body })
    },
    postLoginUser: async ({ body }) => {
-      const jsonBody = JSON.stringify(body)
-      const response = await fetch(USER_URL + LOGIN_URL, {
-         method: METHODS.POST,
-         body: jsonBody,
-         headers: DEFAULT_HEADERS,
-      })
-      return await response.json()
+      return await fetchInstance({ url: USER_URL + LOGIN_URL, method: METHODS.POST, body })
    },
    postCreateRoom: async ({ body, headers = {} }) => {
-      const jsonBody = JSON.stringify(body)
-      const response = await fetch(ROOM_URL + CREATE_URL, {
-         method: METHODS.POST,
-         body: jsonBody,
-         headers: { ...DEFAULT_HEADERS, ...headers },
-      })
-      return await response.json()
+      return await fetchInstance({ url: ROOM_URL + CREATE_URL, body, headers, method: METHODS.POST })
    },
    getMyUserData: async ({ headers = {} }) => {
-      const response = await fetch(USER_URL, {
-         method: METHODS.GET,
-         headers: { ...DEFAULT_HEADERS, ...headers },
-      })
-      return await response.json()
+      return await fetchInstance({ url: USER_URL, headers })
    },
    getCheckRoom: async ({ headers = {}, params }) => {
-      const response = await fetch(ROOM_URL + CHECK_ACCESS_URL + `/${params.roomId}`, {
-         method: METHODS.GET,
-         headers: { ...DEFAULT_HEADERS, ...headers },
-      })
-      return await response.json()
+      return await fetchInstance({ url: `${ROOM_URL}${CHECK_ACCESS_URL}/${params.roomId}`, headers })
    },
    postEnterRoomPass: async ({ headers = {}, params, body = {} }) => {
-      const jsonBody = JSON.stringify(body)
-      const response = await fetch(ROOM_URL + CONNECT_URL + `/${params.roomId}`, {
-         method: METHODS.POST,
-         headers: { ...DEFAULT_HEADERS, ...headers },
-         body: jsonBody
-      })
-      return await response.json()
+      return await fetchInstance({ url: `${ROOM_URL}${CONNECT_URL}/${params.roomId}`, method: METHODS.POST, body, headers })
    },
 }
 
