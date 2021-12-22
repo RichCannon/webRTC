@@ -6,7 +6,7 @@ export const Container = styled.div`
   flex-direction: column;
   align-items: center;
   align-self: center;
-  width: min(95vw, 1440px)
+  width: min(95vw, 1440px);
 `
 
 export const VideosWrapper = styled.div`
@@ -14,7 +14,7 @@ export const VideosWrapper = styled.div`
   align-items: center;
   justify-content: center;
   grid-template-columns: repeat(3, 1fr);
-  grid-gap: 14px;
+  grid-gap: 16px;
   height: 100vh;
 `
 

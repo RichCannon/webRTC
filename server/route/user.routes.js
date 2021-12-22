@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import jwt from 'jsonwebtoken'
-import { authMiddleware } from '../middlewares/auth.middleware.js'
 
+import { authMiddleware } from '../middlewares/auth.middleware.js'
 import { User } from './models/User.js'
 
 const router = Router()
@@ -10,13 +10,13 @@ router.post(`/login`, async (req, res) => {
    try {
       const { login, password } = req.body
       const user = await User.findOne({ userName: login })
-      
-      if(password !== user.password) {
-         return res.status(400).json({ message: `Password isn't correct` })
+
+      if (password !== user.password) {
+         return res.status(400).json({ message: `Password isn't correct`, param: `password` })
       }
 
       if (!user) {
-         return res.status(400).json({ message: `User not found` })
+         return res.status(400).json({ message: `User not found`, param: `alert` })
       }
 
       if (!process.env.JWT_SECRET_KEY) {

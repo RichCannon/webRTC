@@ -1,10 +1,10 @@
-import { useState, useEffect, useRef, useContext } from 'react'
+import { useState, useEffect, useRef, useContext, memo } from 'react'
 import { useHistory } from 'react-router'
+import { useDispatch, useSelector } from 'react-redux'
 
 import Modal from '../../components/Modal/Modal'
 import CreateRoomModal from '../../components/CreateRoomModal/CreateRoomModal'
 import ACTIONS from '../../common/socket/actions'
-import { useDispatch, useSelector } from 'react-redux'
 import { createRoomRequest } from '../../logic/roomLogic/roomReducer'
 import { STORAGE_NAME, userActions } from '../../logic/userLogic/userReducer'
 import { SocketContext } from '../../hooks/useSocket'
@@ -16,7 +16,7 @@ import RoomList from './components/RoomList/RoomList'
 
 
 
-const MainPage = () => {
+const MainPage = memo(() => {
 
    const { socket } = useContext(SocketContext)
 
@@ -32,6 +32,14 @@ const MainPage = () => {
       setCreateRoomValues((values) => ({ ...values, [name]: value }))
    }
 
+   // useEffect(() => {
+   //    if (createRoomData._id) {
+   //       roomHandler({ roomId: createRoomData._id })
+   //       setIsVisible(false)
+   //    }
+
+   // }, [createRoomData])
+
    useEffect(() => {
       // Get all available rooms
       if (!socket) return
@@ -43,7 +51,7 @@ const MainPage = () => {
    }, [socket])
 
    useEffect(() => {
-      if (!isVisible) {
+      if (!isVisible && rootNode.current) {
          setCreateRoomValues({})
       }
    }, [isVisible])
@@ -81,7 +89,7 @@ const MainPage = () => {
       localStorage.removeItem(STORAGE_NAME)
    }
 
-
+   
    return (
       <Styles.Container ref={rootNode}>
          <Styles.H1>{`Available rooms`}</Styles.H1>
@@ -97,6 +105,6 @@ const MainPage = () => {
          <MyButton label={`Logout`} onClick={onLogOutClick} />
       </Styles.Container>
    )
-}
+})
 
 export { MainPage }

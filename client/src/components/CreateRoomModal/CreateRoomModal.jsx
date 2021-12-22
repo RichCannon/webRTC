@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { MyButton } from '../MyButton/MyButton'
 import { MyInput } from '../MyInput/MyInput'
 import * as Styles from './CreateRoomStyles'
@@ -24,6 +23,7 @@ const CreateRoomModal = ({ values, onChangeHandler, onAcceptClick, fetching }) =
             disabled={fetching}
             placeholder={"Password"}
             name={"password"}
+            type={"password"}
             value={values["password"] || ``}
             onChange={onChange} />
          <MyButton

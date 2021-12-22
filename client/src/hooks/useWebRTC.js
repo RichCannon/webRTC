@@ -8,7 +8,6 @@ export const LOCAL_VIDEO = `LOCAL_VIDEO`
 
 export default function useWebRTC({ roomID, socket }) {
    const [clients, updateClients] = useStateWithCallback([])
-   console.log(`USERWEBRTC`)
    const [usersInRoom, setUsersInRoom] = useState({})
 
    const addNewClient = useCallback((newClient, cb) => {
@@ -18,11 +17,13 @@ export default function useWebRTC({ roomID, socket }) {
    // Store all peer connection which connects current client and all users in room
    const peerConnections = useRef({})
    // This will be ref to a my medial element (current client)
-   const localMediaStream = useRef()
+   const localMediaStream = useRef({})
    // This will be link to all peer medial elements (<video/> on current client)
    const peerMediaElements = useRef({
       [LOCAL_VIDEO]: null
    })
+
+   console.log(`peerConnections`, peerConnections.current)
 
    useEffect(() => {
       const handleNewPeer = async ({ peerID, createOffer }) => {
@@ -115,10 +116,8 @@ export default function useWebRTC({ roomID, socket }) {
             // new RTCSessionDescription - For capability with another browsers
             new RTCSessionDescription(remoteDescription)
          )
-
+         
          setUsersInRoom(users => ({ ...users, [peerID]: userData.userName }))
-
-         //console.log(`userData.userName: `, userData.userName)
 
          if (remoteDescription.type === `offer`) {
             const answer = await peerConnections.current[peerID].createAnswer()
@@ -196,7 +195,8 @@ export default function useWebRTC({ roomID, socket }) {
 
       return () => {
          // Stop recording video when leave from room
-         localMediaStream.current.getTracks().forEach(track => track.stop());
+         console.log(`Stop recodring!`)
+         localMediaStream.current.getTracks && localMediaStream.current.getTracks().forEach(track => track.stop());
          // Leave from room
          socket.emit(ACTIONS.LEAVE)
       }

@@ -14,14 +14,12 @@ const withPassword = Component => ({ ...props }) => {
    const { data: checkRoomData, fetching: checkRoomFetching, error: checkRoomError } = useSelector(checkRoomSelector)
    const { data: enterRoomData, fetching: enterRoomFetching, error: enterRoomError } = useSelector(enterRoomPassSelector)
 
-
    if (checkRoomError || enterRoomError) {
       console.error(checkRoomError)
       console.error(enterRoomError)
    }
 
    const { id: roomId } = useParams()
-
    const [roomValues, setRoomValues] = useState({})
 
    const onChange = ({ name, value }) => {

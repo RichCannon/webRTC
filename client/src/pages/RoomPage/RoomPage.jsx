@@ -26,7 +26,7 @@ const RoomPage = () => {
             ? <Preloader />
             : <Styles.VideosWrapper>
                {clients.map((clientID) => (
-                  <Styles.VideoCard >
+                  <Styles.VideoCard key={clientID}>
                      <video
                         width={`100%`}
                         height={`100%`}

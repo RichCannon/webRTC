@@ -43,7 +43,7 @@ export const checkRoomRequest = createAsyncThunk(
    async ({ roomId }, { getState, rejectWithValue }) => {
       try {
          const token = getState().user.currentUser.token
-         console.log(123123)
+      
          const response = await api.getCheckRoom({
             params: { roomId },
             headers: { authorization: `Bearer ${token}` }

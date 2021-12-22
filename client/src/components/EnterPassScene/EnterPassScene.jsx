@@ -15,6 +15,7 @@ const EnterPassScene = ({ roomValues, onChange, onSendRoomPasswordClick, isDisab
          <Styles.Wrapper>
             <Styles.H1>{`Enter room password`}</Styles.H1>
             <MyInput name={`password`}
+               type={'password'}
                placeholder={`Password`}
                value={roomValues[`password`]}
                onChange={onChangeHandler} />

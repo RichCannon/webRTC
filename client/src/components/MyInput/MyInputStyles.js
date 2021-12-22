@@ -22,7 +22,7 @@ export const Input = styled.input`
   padding: .7em;
   background-color:transparent;
   color: ${({ theme }) => theme.colors.secondary};
-  border: ${({ theme, type }) => `2px solid ${theme.colors[type]}`};
+  border: ${({ theme, styleType }) => `2px solid ${theme.colors[styleType]}`};
   font-weight: 600;
   width: 100%;
  

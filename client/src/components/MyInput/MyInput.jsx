@@ -8,11 +8,12 @@ export const INPUT_TYPES = {
   ok: `ok`
 }
 
-export const MyInput = ({ type = INPUT_TYPES.secondary, placeholder, errorText = ``, ...restProps }) => {
+export const MyInput = ({ styleType = INPUT_TYPES.secondary, placeholder, errorText = ``, ...restProps }) => {
+
   return (
     <Styles.Container>
       <Styles.Wrapper>
-        <Styles.Input placeholder={" "} type={type} {...restProps} />
+        <Styles.Input placeholder={" "} styleType={styleType} {...restProps} />
         <Styles.Label >{placeholder}</Styles.Label>
       </Styles.Wrapper>
       <Styles.ErrorWrapper>

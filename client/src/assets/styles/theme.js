@@ -17,6 +17,10 @@ export const theme = {
       ok2: `#4bcfa0`,
       white2: `#f2f2f2`
    },
+   text: {
+      primary: `#f2f2f2`,
+      secondary: `#181818`,
+   },
    breakpoints: {
       xl,
       lg,

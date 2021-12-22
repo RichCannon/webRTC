@@ -54,28 +54,15 @@ const connectionAuth = DB_USERNAME && DB_PASS ? `${DB_USERNAME}@${DB_PASS}` : ''
 const mongoURL = `mongodb://${connectionAuth}${DB_HOST}:${MONGO_PORT}/${DB_NAME}`;
 
 const getClientRooms = async () => {
-   //const { rooms } = io.sockets.adapter
-   // console.log(`Rooms:`, rooms.keys())
-
-   // In $rooms we have all sockets id.
-   // By default, socket.io creating room and connect to this room.
-   // For understanding which id was created by client (client created room for conversation)
-   // we need to find this id and retunr.
-   // We doing this by validating id with library which was used for create room id (from client) 
-
-   // return Array.from(rooms.keys()).filter(roomID => validate(roomID) && version(roomID) === 4)
-
-   const rooms = await Room.find()
-   return rooms.map(r => r.id)
-
+   return await Room.find()
 }
 
 // Share all availbale rooms with clients
 const shareRoomsInfo = async () => {
    const rooms = await getClientRooms()
-   //  console.log(`rooms.length: `, rooms)
+   const roomWithNumOfJoined = rooms.map(r => ({ name: r.name, id: r._id.toString(), numOfJoined: Array.from(io.sockets.adapter.rooms.get(r._id.toString()) || []).length }))
    io.emit(ACTIONS.SHARE_ROOMS, {
-      rooms
+      rooms: roomWithNumOfJoined
    })
 }
 
@@ -92,6 +79,8 @@ io.on('connection', async (socket) => {
       const room = await Room.findById(roomID)
       const user = await User.findById(userId)
 
+      console.log(`Joined: ${user.userName} | ${socket.id}`)
+ 
       if (user.connectedRoom.toString() !== roomID) {
          return console.error(`Doesn't have acces to this room`)
       }
@@ -131,14 +120,13 @@ io.on('connection', async (socket) => {
 
    const leaveRoom = async () => {
       const { rooms } = socket
-      console.log(`${socket.userName} leave from room!`)
+      console.log(`${socket.userName} : ${socket.id} leave from room!`)
       const roomsId = (await Room.find({}, { "id": 1 })).map(r => r._id.toString())
 
       const mapRooms = Array.from(rooms).filter(r => roomsId.includes(r))
 
       for (const roomID of mapRooms) {
          const clients = Array.from(io.sockets.adapter.rooms.get(roomID) || [])
-
 
          clients.forEach(clientID => {
             io.to(clientID).emit(ACTIONS.REMOVE_PEER, {
@@ -150,7 +138,8 @@ io.on('connection', async (socket) => {
             })
          })
 
-         if (clients.length <= 1) {
+         // If only one person left and he leave, then delete room
+         if (clients[0] === socket.id && clients.length === 1) {
             await Room.findOneAndDelete({ "_id": roomID })
          }
 
@@ -179,7 +168,7 @@ io.on('connection', async (socket) => {
    })
 })
 
-
+// Debug tools
 instrument(io, { auth: false })
 
 const main = async () => {
