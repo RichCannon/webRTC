@@ -5,10 +5,19 @@ import ACTIONS from "../common/socket/actions"
 import useStateWithCallback from './useStateWithCallback'
 
 export const LOCAL_VIDEO = `LOCAL_VIDEO`
+export const TRACKS_TYPES = {
+   AUDIO: `audio`,
+   VIDEO: `video`,
+}
+export const DEFAULT_MUTE_STATE = {
+   [TRACKS_TYPES.AUDIO]: true,
+   [TRACKS_TYPES.VIDEO]: true,
+}
 
 export default function useWebRTC({ roomID, socket }) {
    const [clients, updateClients] = useStateWithCallback([])
    const [usersInRoom, setUsersInRoom] = useState({})
+   const [tracksControl, setTracksControl] = useState(DEFAULT_MUTE_STATE)
 
    const addNewClient = useCallback((newClient, cb) => {
       updateClients(list => !list.includes(newClient) ? [...list, newClient] : list, cb);
@@ -116,7 +125,7 @@ export default function useWebRTC({ roomID, socket }) {
             // new RTCSessionDescription - For capability with another browsers
             new RTCSessionDescription(remoteDescription)
          )
-         
+
          setUsersInRoom(users => ({ ...users, [peerID]: userData.userName }))
 
          if (remoteDescription.type === `offer`) {
@@ -207,9 +216,25 @@ export default function useWebRTC({ roomID, socket }) {
       peerMediaElements.current[id] = node
    }, [])
 
+   const controlTracks = (muteType = TRACKS_TYPES.AUDIO, toogle = false) => {
+      localMediaStream.current.getTracks &&
+         localMediaStream.current.getTracks().forEach(track => {
+            if(track.kind === muteType) {
+               track.enabled = toogle
+               setTracksControl(prev => ({...prev, [muteType]: toogle}))
+            }
+         });
+   }
+
+   // const startTrack = () => {
+   //    localMediaStream.current.getTracks && localMediaStream.current.getTracks().forEach(track => track.enabled = true)
+   // }
+
    return {
       clients,
+      usersInRoom,
       provideMediaRef,
-      usersInRoom
+      controlTracks,
+      tracksControl,
    }
 }

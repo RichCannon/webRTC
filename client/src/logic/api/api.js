@@ -41,24 +41,24 @@ const fetchInstance = async ({ url, method = METHODS.GET, body = null, headers =
 
 
 const api = {
-   postRegisterUser: async ({ body }) => {
-      return await fetchInstance({ url: USER_URL + REGISTER_URL, method: METHODS.POST, body })
-   },
-   postLoginUser: async ({ body }) => {
-      return await fetchInstance({ url: USER_URL + LOGIN_URL, method: METHODS.POST, body })
-   },
-   postCreateRoom: async ({ body, headers = {} }) => {
-      return await fetchInstance({ url: ROOM_URL + CREATE_URL, body, headers, method: METHODS.POST })
-   },
-   getMyUserData: async ({ headers = {} }) => {
-      return await fetchInstance({ url: USER_URL, headers })
-   },
-   getCheckRoom: async ({ headers = {}, params }) => {
-      return await fetchInstance({ url: `${ROOM_URL}${CHECK_ACCESS_URL}/${params.roomId}`, headers })
-   },
-   postEnterRoomPass: async ({ headers = {}, params, body = {} }) => {
-      return await fetchInstance({ url: `${ROOM_URL}${CONNECT_URL}/${params.roomId}`, method: METHODS.POST, body, headers })
-   },
+   postRegisterUser: async ({ body }) =>
+      await fetchInstance({ url: USER_URL + REGISTER_URL, method: METHODS.POST, body })
+   ,
+   postLoginUser: async ({ body }) =>
+      await fetchInstance({ url: USER_URL + LOGIN_URL, method: METHODS.POST, body })
+   ,
+   postCreateRoom: async ({ body, headers = {} }) =>
+      await fetchInstance({ url: ROOM_URL + CREATE_URL, body, headers, method: METHODS.POST })
+   ,
+   getMyUserData: async ({ headers = {} }) =>
+      await fetchInstance({ url: USER_URL, headers })
+   ,
+   getCheckRoom: async ({ headers = {}, params }) =>
+      await fetchInstance({ url: `${ROOM_URL}${CHECK_ACCESS_URL}/${params.roomId}`, headers })
+   ,
+   postEnterRoomPass: async ({ headers = {}, params, body = {} }) =>
+      await fetchInstance({ url: `${ROOM_URL}${CONNECT_URL}/${params.roomId}`, method: METHODS.POST, body, headers })
+   ,
 }
 
 export { api }

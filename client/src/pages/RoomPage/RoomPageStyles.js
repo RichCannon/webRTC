@@ -11,7 +11,7 @@ export const Container = styled.div`
 
 export const VideosWrapper = styled.div`
   display: grid;
-  align-items: center;
+  align-items: start;
   justify-content: center;
   grid-template-columns: repeat(3, 1fr);
   grid-gap: 16px;

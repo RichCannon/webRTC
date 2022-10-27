@@ -7,7 +7,7 @@ import * as Styles from "./RoomPageStyles"
 import { Preloader } from "../../components/Preloader/Preloader"
 import withPassword from "../../hocs/withPassword/withPassword"
 import { SocketContext } from "../../hooks/useSocket"
-import useWebRTC, { LOCAL_VIDEO } from "../../hooks/useWebRTC"
+import useWebRTC, { LOCAL_VIDEO, TRACKS_TYPES } from "../../hooks/useWebRTC"
 import { myUserDataSelector } from "../../logic/userLogic/userSelector"
 
 
@@ -15,10 +15,10 @@ const RoomPage = () => {
 
    const { socket } = useContext(SocketContext)
    const { id: roomID } = useParams()
-   const { clients, provideMediaRef, usersInRoom } = useWebRTC({ roomID, socket })
+   const { clients, provideMediaRef, usersInRoom, controlTracks, tracksControl, } = useWebRTC({ roomID, socket })
 
    const { data: myUserData, fetching: myUserDataFetching } = useSelector(myUserDataSelector)
-   
+
    return (
       <Styles.Container>
          <h1>{roomID}</h1>
@@ -35,6 +35,10 @@ const RoomPage = () => {
                         playsInline
                         muted={clientID === LOCAL_VIDEO} />
                      <div>{clientID === LOCAL_VIDEO ? (myUserData.userName || `Loading...`) : usersInRoom[clientID]}</div>
+                     {clientID === LOCAL_VIDEO && <>
+                        <button onClick={() => controlTracks(TRACKS_TYPES.AUDIO, !tracksControl[TRACKS_TYPES.AUDIO])}>STOP AUDIO</button>
+                        <button onClick={() => controlTracks(TRACKS_TYPES.VIDEO, !tracksControl[TRACKS_TYPES.VIDEO])}>STOP VIDEO</button>
+                     </>}
                   </Styles.VideoCard>
                ))}
             </Styles.VideosWrapper>

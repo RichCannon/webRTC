@@ -11,10 +11,14 @@ import { myUserDataSelector } from '../../logic/userLogic/userSelector'
 import { validators } from '../../utils/validators'
 import { useEffect } from 'react'
 import { appActions } from '../../logic/appLogic/appReducer'
+import { INIT_INPUT_LOGIN_VALUES } from './constants'
+import { isEmptyObject, isEmptyObjectValues } from '../../utils/utils'
+
+
 
 const LoginPage = () => {
 
-   const [loginValues, setLoginValues] = useState({})
+   const [loginValues, setLoginValues] = useState(INIT_INPUT_LOGIN_VALUES)
    const [loginErrors, setLoginErrors] = useState({})
    const dispatch = useDispatch()
    const history = useHistory()
@@ -30,6 +34,7 @@ const LoginPage = () => {
       if (myUserDataError) {
          setLoginErrors(errors => ({ ...errors, [myUserDataError.param]: myUserDataError.message }))
          if (myUserDataError.param === `alert`) {
+            console.log(`error`)
             appActions.showAlert(myUserDataError.message)
          }
       }
@@ -37,18 +42,27 @@ const LoginPage = () => {
 
    const onLogInClick = () => {
       const errors = {}
+      errors.login = validators.maxLength(10, loginValues.login)
       errors.login = validators.required(loginValues.login)
-      errors.login = validators.maxLength(loginValues.login)
-      dispatch(loginUserRequest(loginValues)).unwrap()
-         .then(response => {
-            history.replace('/')
-         })
-         .catch(e => {
-            console.error(e)
-         })
+      errors.password = validators.maxLength(20, loginValues.password)
+      errors.password = validators.required(loginValues.password)
+      
+      if (isEmptyObjectValues(errors)) {
+         dispatch(loginUserRequest(loginValues)).unwrap()
+            .then(response => {
+               history.replace('/')
+            })
+            .catch(e => {
+
+               console.error(e)
+            })
+      }
+      else {
+         setLoginErrors(errors)
+      }
    }
 
-   const onPasswordClick = (name) => {
+   const handleClickResetInputError = ({ target: { name } }) => {
       setLoginErrors(errors => ({ ...errors, [name]: null }))
    }
 
@@ -56,15 +70,21 @@ const LoginPage = () => {
       <Styles.Container>
          <Styles.Wrapper>
             <Styles.H1>{`Login to Seer`}</Styles.H1>
-            <MyInput placeholder={"Login"} name={"login"} value={loginValues["login"]} onChange={onChangeHandler} />
+            <MyInput
+               errorText={loginErrors && loginErrors.login}
+               placeholder={"Login*"}
+               name={"login"}
+               value={loginValues["login"]}
+               onChange={onChangeHandler}
+               onClick={handleClickResetInputError} />
             <MyInput
                type={'password'}
                errorText={loginErrors && loginErrors.password}
-               placeholder={"Password"}
+               placeholder={"Password*"}
                name={"password"}
                value={loginValues["password"]}
                onChange={onChangeHandler}
-               onClick={() => onPasswordClick(`password`)}
+               onClick={handleClickResetInputError}
             />
             <MyButton loading={myUserDataFetching} disabled={myUserDataFetching} label={`Login`} onClick={onLogInClick} />
             <Styles.LinkToRegister>

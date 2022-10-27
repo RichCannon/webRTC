@@ -7,6 +7,7 @@ import { checkRoomSelector, enterRoomPassSelector } from "../../logic/roomLogic/
 
 import { Preloader } from '../../components/Preloader/Preloader'
 import { EnterPassScene } from "../../components/EnterPassScene/EnterPassScene"
+import { appActions } from "../../logic/appLogic/appReducer"
 
 
 const withPassword = Component => ({ ...props }) => {
@@ -20,9 +21,9 @@ const withPassword = Component => ({ ...props }) => {
    }
 
    const { id: roomId } = useParams()
-   const [roomValues, setRoomValues] = useState({})
+   const [roomValues, setRoomValues] = useState({ password: `` })
 
-   const onChange = ({ name, value }) => {
+   const onChange = ({ target: { value, name } }) => {
       setRoomValues((values) => ({ ...values, [name]: value }))
    }
 
@@ -33,7 +34,11 @@ const withPassword = Component => ({ ...props }) => {
    }, [])
 
    const onSendRoomPasswordClick = () => {
-      dispatch(enterRoomPassRequest({ roomId, password: roomValues[`password`] }))
+      dispatch(enterRoomPassRequest({ roomId, password: roomValues.password })).unwrap()
+         .then(() => { })
+         .catch(e => {
+            dispatch(appActions.showAlert({ message: e?.message || e.reason }))}
+         )
    }
 
    return (
@@ -44,6 +49,7 @@ const withPassword = Component => ({ ...props }) => {
                {checkRoomData.connected
                   ? <Component {...props} />
                   : <EnterPassScene
+                     isLoading={enterRoomFetching}
                      isDisabled={enterRoomFetching}
                      roomValues={roomValues}
                      onChange={onChange}

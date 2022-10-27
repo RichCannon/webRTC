@@ -8,9 +8,8 @@ const router = Router()
 
 router.post(`/create`, authMiddleware, async (req, res) => {
    try {
-      const myId = req.myId
+      const { user } = req
       const room = await Room.create(req.body)
-      const user = await User.findById(myId)
 
       user.connectedRoom = room._id
       await user.save()
@@ -26,13 +25,11 @@ router.post(`/create`, authMiddleware, async (req, res) => {
 router.get(`/check-access/:id`, authMiddleware, async (req, res) => {
    try {
       const roomId = req.params.id
-      const myId = req.myId
+      const { user } = req
 
       if (!roomId) {
          res.status(400).json({ message: `Empty room id` })
       }
-
-      const user = await User.findById(myId, { "connectedRoom": 1 })
 
       if (!user.connectedRoom) {
          return res.json({
@@ -53,19 +50,23 @@ router.get(`/check-access/:id`, authMiddleware, async (req, res) => {
 router.post(`/connect/:id`, authMiddleware, async (req, res) => {
    try {
       const roomId = req.params.id
-      const myId = req.myId
+      const { user } = req
       const roomPass = req.body.password
 
-
-
       if (!roomId) {
-         res.status(400).json({ message: `Empty room id` })
+         return res.status(400).json({ message: `Empty room id` })
       }
 
       const room = await Room.findById(roomId, { "password": 1 })
-      const user = await User.findById(myId)
 
-      if (room.password === roomPass) {
+      if (!room) {
+         throw {
+            connected: false,
+            reason: `Room doesn't exist`
+         }
+      }
+
+      if (room && room.password === roomPass) {
          user.connectedRoom = room._id
          await user.save()
          return res.json({
@@ -73,14 +74,14 @@ router.post(`/connect/:id`, authMiddleware, async (req, res) => {
          })
       }
 
-      return res.json({
+      throw {
          connected: false,
          reason: `Wrong password`
-      })
+      }
 
    } catch (e) {
       console.error(e)
-      return res.status(500)
+      return res.status(500).json(e)
    }
 })
 

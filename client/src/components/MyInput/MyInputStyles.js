@@ -20,13 +20,11 @@ export const Wrapper = styled.div`
 export const Input = styled.input`
   font-size: 1rem;
   padding: .7em;
-  background-color:transparent;
+  background-color: transparent;
   color: ${({ theme }) => theme.colors.secondary};
   border: ${({ theme, styleType }) => `2px solid ${theme.colors[styleType]}`};
   font-weight: 600;
   width: 100%;
- 
-
 `
 
 export const Label = styled.label`
@@ -45,9 +43,9 @@ export const Label = styled.label`
 
 export const ErrorWrapper = styled.p`
   display: flex;
-  font-size: 1rem;
+  font-size: .8rem;
   height: 1.3em;  
   line-height: 1em;
   align-items: flex-end;
-  color: ${({theme}) => theme.colors.error}
+  color: ${({ theme }) => theme.colors.error}
 `

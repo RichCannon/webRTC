@@ -1,21 +1,28 @@
 import { useEffect } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 import { showAlertSelector } from '../../logic/appLogic/appSelector'
 import * as Styles from './AlertModalStyles'
-import appActions from '../../logic/appLogic/appReducer'
+import { appActions } from '../../logic/appLogic/appReducer'
 
 export const AlertModal = () => {
+  const { isVisible, message, type } = useSelector(showAlertSelector)
 
-  const { isVisible, errorMessage } = useSelector(showAlertSelector)
+  const dispatch = useDispatch()
 
   useEffect(() => {
-    setTimeout(() => appActions.hideAlert, 1000)
-  }, [])
+    let timeoutid
+    if (isVisible) {
+      timeoutid = setTimeout(() => dispatch(appActions.hideAlert()), 5000)
+    }
+    return () => {
+      clearTimeout(timeoutid)
+    }
+  }, [isVisible])
 
   return (
-    <Styles.Container isVisible={isVisible}>
-      {errorMessage}
+    <Styles.Container type={type} isVisible={isVisible}>
+      {message}
     </Styles.Container>
   )
 }

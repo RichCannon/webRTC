@@ -12,7 +12,7 @@ export const Container = styled.button`
   font-weight: bold;
   transition: transform .2s;
   line-height: 1em;
-
+  cursor: pointer;
   &:active {
     transform: scale(.95)
   }

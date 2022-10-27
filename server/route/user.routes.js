@@ -8,10 +8,10 @@ const router = Router()
 
 router.post(`/login`, async (req, res) => {
    try {
-      const { login, password } = req.body
+      const { login = null, password = null } = req.body
       const user = await User.findOne({ userName: login })
 
-      if (password !== user.password) {
+      if (password !== user?.password) {
          return res.status(400).json({ message: `Password isn't correct`, param: `password` })
       }
 
@@ -48,9 +48,7 @@ router.post(`/register`, async (req, res) => {
 })
 router.get(`/`, authMiddleware, async (req, res) => {
    try {
-      const myId = req.myId
-      const user = await User.findById(myId, { userName: 1 })
-      return res.json(user)
+      return res.json({ userName: req.user.userName })
 
    } catch (e) {
       console.error(e)

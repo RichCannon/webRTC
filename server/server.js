@@ -60,7 +60,19 @@ const getClientRooms = async () => {
 // Share all availbale rooms with clients
 const shareRoomsInfo = async () => {
    const rooms = await getClientRooms()
-   const roomWithNumOfJoined = rooms.map(r => ({ name: r.name, id: r._id.toString(), numOfJoined: Array.from(io.sockets.adapter.rooms.get(r._id.toString()) || []).length }))
+
+   const roomWithNumOfJoined = []
+
+   for (let i = 0; i < rooms.length; i++) {
+      const r = rooms[i]
+      const numOfJoined = Array.from(io.sockets.adapter.rooms.get(r._id.toString()) || []).length
+      if (!numOfJoined) { // Remove room if nobody in here
+         return r.remove()
+         
+      }
+      roomWithNumOfJoined.push({ name: r.name, id: r._id.toString(), numOfJoined })
+   }
+
    io.emit(ACTIONS.SHARE_ROOMS, {
       rooms: roomWithNumOfJoined
    })
@@ -80,7 +92,7 @@ io.on('connection', async (socket) => {
       const user = await User.findById(userId)
 
       console.log(`Joined: ${user.userName} | ${socket.id}`)
- 
+
       if (user.connectedRoom.toString() !== roomID) {
          return console.error(`Doesn't have acces to this room`)
       }

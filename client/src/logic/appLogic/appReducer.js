@@ -1,9 +1,11 @@
-const { createSlice } = require("@reduxjs/toolkit")
+import { ALERT_TYPE } from "./constants"
+import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
   alertData: {
     isVisible: false,
-    errorMessage: ``
+    errorMessage: ``,
+    type: ALERT_TYPE.ERROR
   }
 }
 
@@ -12,11 +14,11 @@ const appReducer = createSlice({
   name: "app",
   initialState,
   reducers: {
-    showAlert(state, action) {
-      state.alertData = { message: action, isVisible: true }
+    showAlert(state, { payload }) {
+      state.alertData = { message: payload.message, type: payload?.type || ALERT_TYPE.ERROR, isVisible: true }
     },
     hideAlert(state) {
-      state.alertData = { message: ``, isVisible: false }
+      state.alertData = { isVisible: false }
     }
   },
 })

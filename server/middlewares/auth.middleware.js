@@ -23,32 +23,33 @@ const authMiddleware = async (req, res, next) => {
       }
 
       const userId = getUserDataFromToken(token)
-      const user = await User.findOne({ _id: userId }, { "_id": 1 })
+      const user = await User.findOne({ _id: userId })
 
       if (!user) {
          return res.status(400).json({ message: `User doesn't exist` })
       }
-      req.myId = userId
+      req.user = user
       next()
 
    } catch (e) {
-      res.status(401).json({ message: e.message || `You need to log in` })
+      return res.status(401).json({ message: e.message || `You need to log in` })
    }
 }
 
 const authSocketMiddleware = async (socket, next) => {
    const token = socket.handshake.auth.token
    if (!token) {
-      next(new Error({ message: `Plese provide token!` }))
+      return next(new Error({ message: `Plese provide token!` }))
    }
    socket.userId = getUserDataFromToken(token)
    const user = await User.findById(socket.userId, { "userName": 1, "_id": 1 })
+
    if (!user) {
-      next(new Error({ message: `Such user doesn't exist!` }))
+      return next(new Error({ message: `Such user doesn't exist!` }))
    }
    socket.userName = user.userName
    socket.userId = user._id.toString()
-   next()
+   return next()
 }
 
 export { authMiddleware, authSocketMiddleware }

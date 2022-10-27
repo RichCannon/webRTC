@@ -13,8 +13,8 @@ export const MyInput = ({ styleType = INPUT_TYPES.secondary, placeholder, errorT
   return (
     <Styles.Container>
       <Styles.Wrapper>
-        <Styles.Input placeholder={" "} styleType={styleType} {...restProps} />
-        <Styles.Label >{placeholder}</Styles.Label>
+        <Styles.Input placeholder={" "} styleType={errorText ? INPUT_TYPES.error : styleType} {...restProps} />
+        <Styles.Label>{placeholder}</Styles.Label>
       </Styles.Wrapper>
       <Styles.ErrorWrapper>
         {errorText}
