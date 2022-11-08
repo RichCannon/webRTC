@@ -80,6 +80,8 @@ const shareRoomsInfo = async () => {
 
 
 
+
+
 io.on('connection', async (socket) => {
    await shareRoomsInfo()
    // Join to room handler
@@ -178,7 +180,20 @@ io.on('connection', async (socket) => {
          iceCandidate,
       })
    })
+
+   // Mute implementation
+   socket.on(ACTIONS.MUTE_TRACK, ({ trackType, usersInRoom }) => {
+      
+      usersInRoom.forEach(clientID => {
+         io.to(clientID).emit(ACTIONS.MUTE_TRACK, {
+            id: socket.id,
+            trackType,
+         })
+
+      })
+   })
 })
+
 
 // Debug tools
 instrument(io, { auth: false })

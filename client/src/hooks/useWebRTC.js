@@ -9,7 +9,7 @@ export const TRACKS_TYPES = {
    AUDIO: `audio`,
    VIDEO: `video`,
 }
-export const DEFAULT_MUTE_STATE = {
+const DEFAULT_TRACKS_CONTROL_STATE = {
    [TRACKS_TYPES.AUDIO]: true,
    [TRACKS_TYPES.VIDEO]: true,
 }
@@ -17,7 +17,7 @@ export const DEFAULT_MUTE_STATE = {
 export default function useWebRTC({ roomID, socket }) {
    const [clients, updateClients] = useStateWithCallback([])
    const [usersInRoom, setUsersInRoom] = useState({})
-   const [tracksControl, setTracksControl] = useState(DEFAULT_MUTE_STATE)
+   const [tracksControl, setTracksControl] = useState(DEFAULT_TRACKS_CONTROL_STATE)
 
    const addNewClient = useCallback((newClient, cb) => {
       updateClients(list => !list.includes(newClient) ? [...list, newClient] : list, cb);
@@ -31,8 +31,6 @@ export default function useWebRTC({ roomID, socket }) {
    const peerMediaElements = useRef({
       [LOCAL_VIDEO]: null
    })
-
-   console.log(`peerConnections`, peerConnections.current)
 
    useEffect(() => {
       const handleNewPeer = async ({ peerID, createOffer }) => {
@@ -126,7 +124,7 @@ export default function useWebRTC({ roomID, socket }) {
             new RTCSessionDescription(remoteDescription)
          )
 
-         setUsersInRoom(users => ({ ...users, [peerID]: userData.userName }))
+         setUsersInRoom(users => ({ ...users, [peerID]: { userName: userData.userName, audio: true, video: true } }))
 
          if (remoteDescription.type === `offer`) {
             const answer = await peerConnections.current[peerID].createAnswer()
@@ -187,6 +185,8 @@ export default function useWebRTC({ roomID, socket }) {
             }
          })
 
+         localMediaStream.current.getTracks().forEach(track => track.onmute = (e) => console.log(`1231`, e));
+
          addNewClient(LOCAL_VIDEO, () => {
             const localVideoElement = peerMediaElements.current[LOCAL_VIDEO]
 
@@ -216,19 +216,35 @@ export default function useWebRTC({ roomID, socket }) {
       peerMediaElements.current[id] = node
    }, [])
 
+   // const muteTrack = (trackType = TRACKS_TYPES.AUDIO) => {
+   //    socket.emit(ACTIONS.MUTE_TRACK, { trackType })
+   // }
+
    const controlTracks = (muteType = TRACKS_TYPES.AUDIO, toogle = false) => {
+      // Send users data that you are muted video or audio
+      console.log(`controlTracks`)
+      socket.emit(ACTIONS.MUTE_TRACK, { trackType: muteType, usersInRoom: Object.keys(usersInRoom) })
+
       localMediaStream.current.getTracks &&
          localMediaStream.current.getTracks().forEach(track => {
-            if(track.kind === muteType) {
+            if (track.kind === muteType) {
                track.enabled = toogle
-               setTracksControl(prev => ({...prev, [muteType]: toogle}))
+               setTracksControl(prev => ({ ...prev, [muteType]: toogle }))
             }
          });
+      localMediaStream.current.getTracks().forEach(track => console.log(`track.mute`, track.muted));
    }
 
-   // const startTrack = () => {
-   //    localMediaStream.current.getTracks && localMediaStream.current.getTracks().forEach(track => track.enabled = true)
-   // }
+   useEffect(() => {
+      
+      const muteTrackHandle = ({id, trackType}) => {
+         setUsersInRoom(prev => ({...prev, [id]: {...prev[id], [trackType]: !prev[id][trackType]}}))
+      }
+
+      socket.on(ACTIONS.MUTE_TRACK, muteTrackHandle)
+   
+   }, [])
+   
 
    return {
       clients,

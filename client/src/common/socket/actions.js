@@ -8,6 +8,7 @@ const ACTIONS = {
    RELAY_ICE: 'relay-ice', // Passing ice candidate (public ip, port etc. (NAT)). This is our physical connection
    ICE_CANDIDATE: 'ice-candidate',
    SESSION_DESCRIPTION: 'session-description',
+   MUTE_TRACK: `mute-track`
    
 }
 

@@ -15,7 +15,7 @@ export const VideosWrapper = styled.div`
   justify-content: center;
   grid-template-columns: repeat(3, 1fr);
   grid-gap: 16px;
-  height: 100vh;
+  min-height: 100vh;
 `
 
 export const VideoCard = styled.div`
@@ -24,4 +24,6 @@ export const VideoCard = styled.div`
   align-items: center;
   row-gap: 14px;
   font-weight: 600;
+  border: ${({ mutedAudio}) => mutedAudio ? `1px solid red` : 0};
+  background-color: ${({mutedVideo}) => mutedVideo ? `green` : `transparent`};
 `
