@@ -1,9 +1,10 @@
+import { memo } from 'react'
 import { MyButton } from '../../../../components/MyButton/MyButton'
 import * as Styles from './RoomListStyles'
 
 const RoomList = ({ rooms = [], roomHandler }) => {
 
-  console.log(`rooms`,rooms)
+  //console.log(`rooms`,rooms)
 
   return (
     <Styles.Container>
@@ -18,5 +19,5 @@ const RoomList = ({ rooms = [], roomHandler }) => {
   )
 }
 
-export default RoomList
+export default memo(RoomList)
 

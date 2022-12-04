@@ -12,7 +12,7 @@ import { validators } from '../../utils/validators'
 import { useEffect } from 'react'
 import { appActions } from '../../logic/appLogic/appReducer'
 import { INIT_INPUT_LOGIN_VALUES } from './constants'
-import { isEmptyObject, isEmptyObjectValues } from '../../utils/utils'
+import { isEmptyObjectValues } from '../../utils/utils'
 
 
 
@@ -53,7 +53,6 @@ const LoginPage = () => {
                history.replace('/')
             })
             .catch(e => {
-
                console.error(e)
             })
       }

@@ -1,4 +1,4 @@
-import { useContext } from "react"
+import { memo, useContext } from "react"
 import { useSelector } from "react-redux"
 import { useParams } from "react-router"
 
@@ -29,31 +29,32 @@ const RoomPage = () => {
                   const isCurrentUserTrack = clientID === LOCAL_VIDEO
                   const mutedVideo = isCurrentUserTrack ? !tracksControl[TRACKS_TYPES.VIDEO] : !usersInRoom[clientID]?.video
                   const mutedAudio = isCurrentUserTrack ? !tracksControl[TRACKS_TYPES.AUDIO] : !usersInRoom[clientID]?.audio
-                  return(
-                  <Styles.VideoCard
-                     key={clientID}
-                     mutedVideo={mutedVideo}
-                     mutedAudio={mutedAudio}>
-                     <video
-                        width={`100%`}
-                        height={`100%`}
-                        ref={instance => provideMediaRef(clientID, instance)}
-                        autoPlay
-                        playsInline
-                        muted={isCurrentUserTrack} />
-                     <div>{isCurrentUserTrack ? (myUserData.userName || `Loading...`) : usersInRoom[clientID]?.userName}</div>
-                     {isCurrentUserTrack && <>
-                        <button onClick={() => controlTracks(TRACKS_TYPES.AUDIO, mutedAudio)}>STOP AUDIO</button>
-                        <button onClick={() => controlTracks(TRACKS_TYPES.VIDEO, mutedVideo)}>STOP VIDEO</button>
-                     </>}
-                  </Styles.VideoCard>
-               )})}
+                  return (
+                     <Styles.VideoCard
+                        key={clientID}
+                        mutedVideo={mutedVideo}
+                        mutedAudio={mutedAudio}>
+                        <video
+                           width={`100%`}
+                           height={`100%`}
+                           ref={instance => provideMediaRef(clientID, instance)}
+                           autoPlay
+                           playsInline
+                           muted={isCurrentUserTrack} />
+                        <div>{isCurrentUserTrack ? (myUserData.userName || `Loading...`) : usersInRoom[clientID]?.userName}</div>
+                        {isCurrentUserTrack && <>
+                           <button onClick={() => controlTracks(TRACKS_TYPES.AUDIO, mutedAudio)}>STOP AUDIO</button>
+                           <button onClick={() => controlTracks(TRACKS_TYPES.VIDEO, mutedVideo)}>STOP VIDEO</button>
+                        </>}
+                     </Styles.VideoCard>
+                  )
+               })}
             </Styles.VideosWrapper>
          }
       </Styles.Container>
    )
 }
 
-const ProtectedRoomPage = withPassword(RoomPage)
+const ProtectedRoomPage = withPassword(memo(RoomPage))
 
 export { ProtectedRoomPage as RoomPage }
