@@ -12,7 +12,8 @@ import { RoomPage } from "../RoomPage/RoomPage"
 // Selectors
 import { currentUser, myUserDataSelector } from "../../logic/userLogic/userSelector"
 // Actions with request
-import { getMyUserDataRequest, STORAGE_NAME } from "../../logic/userLogic/userReducer"
+import { getMyUserDataRequest } from "../../logic/userLogic/userReducer"
+import { USER_LOCAL_STORAGE_NAME } from "../../hooks/constants"
 
 
 const PrivateRouter = () => {
@@ -33,7 +34,7 @@ const PrivateRouter = () => {
             })
             .catch(e => {
                console.error(e) 
-               localStorage.removeItem(STORAGE_NAME)
+               localStorage.removeItem(USER_LOCAL_STORAGE_NAME)
                alert(e.message)
                history.push(`/`)
             })

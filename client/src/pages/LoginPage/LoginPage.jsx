@@ -12,7 +12,7 @@ import { validators } from '../../utils/validators'
 import { useEffect } from 'react'
 import { appActions } from '../../logic/appLogic/appReducer'
 import { INIT_INPUT_LOGIN_VALUES } from './constants'
-import { isEmptyObject, isEmptyObjectValues } from '../../utils/utils'
+import { isEmptyObjectValues } from '../../utils/utils'
 
 
 
@@ -34,7 +34,6 @@ const LoginPage = () => {
       if (myUserDataError) {
          setLoginErrors(errors => ({ ...errors, [myUserDataError.param]: myUserDataError.message }))
          if (myUserDataError.param === `alert`) {
-            console.log(`error`)
             appActions.showAlert(myUserDataError.message)
          }
       }
@@ -53,7 +52,6 @@ const LoginPage = () => {
                history.replace('/')
             })
             .catch(e => {
-
                console.error(e)
             })
       }

@@ -93,7 +93,7 @@ io.on('connection', async (socket) => {
       const room = await Room.findById(roomID)
       const user = await User.findById(userId)
 
-      console.log(`Joined: ${user.userName} | ${socket.id}`)
+      console.log(`Joined: ${user.userName} | ${socket.id} to room ${roomID}`)
 
       if (user.connectedRoom.toString() !== roomID) {
          return console.error(`Doesn't have acces to this room`)
@@ -107,6 +107,7 @@ io.on('connection', async (socket) => {
       if (Array.from(joinedRooms).includes(roomID)) {
          return console.warn(`${socket.userName}: Already joined to ${roomID}`)
       }
+
 
       // Get all clients that already connected to this room
       const clients = Array.from(io.sockets.adapter.rooms.get(roomID) || [])
@@ -154,6 +155,7 @@ io.on('connection', async (socket) => {
 
          // If only one person left and he leave, then delete room
          if (clients[0] === socket.id && clients.length === 1) {
+            console.log(`Room deleted:`, roomID)
             await Room.findOneAndDelete({ "_id": roomID })
          }
 
@@ -170,7 +172,7 @@ io.on('connection', async (socket) => {
       io.to(peerID).emit(ACTIONS.SESSION_DESCRIPTION, {
          peerID: socket.id,
          sessionDescription,
-         userData: { userName: socket.userName }
+         userData: { userName: socket.userName, tracksControl: socket.tracksControl }
       })
    })
 
@@ -182,12 +184,12 @@ io.on('connection', async (socket) => {
    })
 
    // Mute implementation
-   socket.on(ACTIONS.MUTE_TRACK, ({ trackType, usersInRoom }) => {
-      
+   socket.on(ACTIONS.MUTE_TRACK, ({ tracksControl, usersInRoom }) => {
+      socket.tracksControl = tracksControl // Adding for user socket instance mute control object
       usersInRoom.forEach(clientID => {
          io.to(clientID).emit(ACTIONS.MUTE_TRACK, {
             id: socket.id,
-            trackType,
+            tracksControl,
          })
 
       })

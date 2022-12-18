@@ -6,12 +6,13 @@ import Modal from '../../components/Modal/Modal'
 import CreateRoomModal from '../../components/CreateRoomModal/CreateRoomModal'
 import ACTIONS from '../../common/socket/actions'
 import { createRoomRequest } from '../../logic/roomLogic/roomReducer'
-import { STORAGE_NAME, userActions } from '../../logic/userLogic/userReducer'
+import { userActions } from '../../logic/userLogic/userReducer'
 import { SocketContext } from '../../hooks/useSocket'
 import * as Styles from './MainPagesStyles'
 import { MyButton } from '../../components/MyButton/MyButton'
 import { createRoomSelector } from '../../logic/roomLogic/roomSelector'
 import RoomList from './components/RoomList/RoomList'
+import { USER_LOCAL_STORAGE_NAME } from '../../hooks/constants'
 
 
 
@@ -86,7 +87,7 @@ const MainPage = memo(() => {
          userId: null
       }))
       dispatch(userActions.setMyUserData(null))
-      localStorage.removeItem(STORAGE_NAME)
+      localStorage.removeItem(USER_LOCAL_STORAGE_NAME)
    }
 
    

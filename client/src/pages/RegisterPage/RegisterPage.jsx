@@ -17,7 +17,7 @@ const RegisterPage = () => {
 
    const dispatch = useDispatch()
 
-   const { fetching: myUserDataFetching, error: myUserDataError } = useSelector(myUserDataSelector)
+   const { fetching: myUserDataFetching, /* error: myUserDataError */ } = useSelector(myUserDataSelector)
 
    const onChangeHandler = (e) => {
       const name = e.currentTarget.name

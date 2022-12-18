@@ -3,16 +3,8 @@ import freeice from 'freeice'
 
 import ACTIONS from "../common/socket/actions"
 import useStateWithCallback from './useStateWithCallback'
+import { DEFAULT_TRACKS_CONTROL_STATE, LOCAL_VIDEO, TRACKS_TYPES } from "./constants"
 
-export const LOCAL_VIDEO = `LOCAL_VIDEO`
-export const TRACKS_TYPES = {
-   AUDIO: `audio`,
-   VIDEO: `video`,
-}
-const DEFAULT_TRACKS_CONTROL_STATE = {
-   [TRACKS_TYPES.AUDIO]: true,
-   [TRACKS_TYPES.VIDEO]: true,
-}
 
 export default function useWebRTC({ roomID, socket }) {
    const [clients, updateClients] = useStateWithCallback([])
@@ -34,8 +26,8 @@ export default function useWebRTC({ roomID, socket }) {
 
    useEffect(() => {
       const handleNewPeer = async ({ peerID, createOffer }) => {
-         // If we are who already in room: $peerId - is a id of user which trying to connect to room where we also located
-         // If we are who trying to connect: $peerId = id of user who already in room
+         // If we are who already in room: $peerId - id of user which trying to connect to room where we also located
+         // If we are who trying to connect: $peerId - id of user who already in room
 
          // If we are already connected to the current peer
          if (peerID in peerConnections.current) {
@@ -92,7 +84,7 @@ export default function useWebRTC({ roomID, socket }) {
             peerConnections.current[peerID].addTrack(track, localMediaStream.current)
          })
 
-         if (createOffer) { // If we are who connected
+         if (createOffer) { // If we are who trying to connect
             const offer = await peerConnections.current[peerID].createOffer()
 
             // Set the content which we wanna to translate
@@ -123,8 +115,9 @@ export default function useWebRTC({ roomID, socket }) {
             // new RTCSessionDescription - For capability with another browsers
             new RTCSessionDescription(remoteDescription)
          )
-
-         setUsersInRoom(users => ({ ...users, [peerID]: { userName: userData.userName, audio: true, video: true } }))
+         // If user have in his instance object with his mute status, we use this
+         // If does nothing and mute object in socker instance doesn't exit, we just use default mute object
+         setUsersInRoom(users => ({ ...users, [peerID]: { ...userData, ...(userData.tracksControl || DEFAULT_TRACKS_CONTROL_STATE) } }))
 
          if (remoteDescription.type === `offer`) {
             const answer = await peerConnections.current[peerID].createAnswer()
@@ -175,6 +168,7 @@ export default function useWebRTC({ roomID, socket }) {
 
    // Creating our media stream of video from webCam
    useEffect(() => {
+      console.log(`JOINING ROOM`)
       const startCapture = async () => {
          // Getting our media content
          localMediaStream.current = await navigator.mediaDevices.getUserMedia({
@@ -184,8 +178,6 @@ export default function useWebRTC({ roomID, socket }) {
                height: 720
             }
          })
-
-         localMediaStream.current.getTracks().forEach(track => track.onmute = (e) => console.log(`1231`, e));
 
          addNewClient(LOCAL_VIDEO, () => {
             const localVideoElement = peerMediaElements.current[LOCAL_VIDEO]
@@ -204,10 +196,12 @@ export default function useWebRTC({ roomID, socket }) {
 
       return () => {
          // Stop recording video when leave from room
-         console.log(`Stop recodring!`)
-         localMediaStream.current.getTracks && localMediaStream.current.getTracks().forEach(track => track.stop());
-         // Leave from room
-         socket.emit(ACTIONS.LEAVE)
+         if (localMediaStream.current.getTracks) {
+            console.log(`Stop recodring!`, localMediaStream.current)
+            localMediaStream.current.getTracks().forEach(track => track.stop());
+            // Leave from room
+            socket.emit(ACTIONS.LEAVE)
+         }
       }
 
    }, [roomID])
@@ -216,14 +210,11 @@ export default function useWebRTC({ roomID, socket }) {
       peerMediaElements.current[id] = node
    }, [])
 
-   // const muteTrack = (trackType = TRACKS_TYPES.AUDIO) => {
-   //    socket.emit(ACTIONS.MUTE_TRACK, { trackType })
-   // }
 
    const controlTracks = (muteType = TRACKS_TYPES.AUDIO, toogle = false) => {
       // Send users data that you are muted video or audio
-      console.log(`controlTracks`)
-      socket.emit(ACTIONS.MUTE_TRACK, { trackType: muteType, usersInRoom: Object.keys(usersInRoom) })
+      const tempTrackControls = { ...tracksControl, [muteType]: toogle }
+      socket.emit(ACTIONS.MUTE_TRACK, { tracksControl: tempTrackControls, usersInRoom: Object.keys(usersInRoom) })
 
       localMediaStream.current.getTracks &&
          localMediaStream.current.getTracks().forEach(track => {
@@ -232,19 +223,21 @@ export default function useWebRTC({ roomID, socket }) {
                setTracksControl(prev => ({ ...prev, [muteType]: toogle }))
             }
          });
-      localMediaStream.current.getTracks().forEach(track => console.log(`track.mute`, track.muted));
    }
 
+   // Control tracks mute status
    useEffect(() => {
-      
-      const muteTrackHandle = ({id, trackType}) => {
-         setUsersInRoom(prev => ({...prev, [id]: {...prev[id], [trackType]: !prev[id][trackType]}}))
+      const muteTrackHandle = ({ id, tracksControl }) => {
+         setUsersInRoom(prev => ({ ...prev, [id]: { ...prev[id], ...tracksControl } }))
+      }
+      socket.on(ACTIONS.MUTE_TRACK, muteTrackHandle)
+
+      return () => {
+         socket.off(ACTIONS.MUTE_TRACK);
       }
 
-      socket.on(ACTIONS.MUTE_TRACK, muteTrackHandle)
-   
    }, [])
-   
+
 
    return {
       clients,

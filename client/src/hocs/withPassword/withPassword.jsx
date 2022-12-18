@@ -13,7 +13,7 @@ import { appActions } from "../../logic/appLogic/appReducer"
 const withPassword = Component => ({ ...props }) => {
 
    const { data: checkRoomData, fetching: checkRoomFetching, error: checkRoomError } = useSelector(checkRoomSelector)
-   const { data: enterRoomData, fetching: enterRoomFetching, error: enterRoomError } = useSelector(enterRoomPassSelector)
+   const { /* data: enterRoomData, */ fetching: enterRoomFetching, error: enterRoomError } = useSelector(enterRoomPassSelector)
 
    if (checkRoomError || enterRoomError) {
       console.error(checkRoomError)

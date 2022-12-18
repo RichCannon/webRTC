@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import { USER_LOCAL_STORAGE_NAME } from '../../hooks/constants'
 import { api } from '../api/api'
 
-export const STORAGE_NAME = `userData`
 
 const initialState = {
    myUserData: {
@@ -79,7 +79,7 @@ const userReducer = createSlice({
       // Login user
       builder.addCase(loginUserRequest.fulfilled, (state, action) => {
          state.myUserData.data = action.payload.userData
-         localStorage.setItem(STORAGE_NAME, JSON.stringify({ userId: action.payload.userData._id, token: action.payload.token }))
+         localStorage.setItem(USER_LOCAL_STORAGE_NAME, JSON.stringify({ userId: action.payload.userData._id, token: action.payload.token }))
          state.currentUser = {
             token: action.payload.token,
             userId: action.payload.userData._id

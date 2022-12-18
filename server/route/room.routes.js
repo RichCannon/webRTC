@@ -2,7 +2,7 @@ import { Router } from 'express'
 import { authMiddleware } from '../middlewares/auth.middleware.js'
 
 import { Room } from './models/Room.js'
-import { User } from './models/User.js'
+// import { User } from './models/User.js'
 
 const router = Router()
 
@@ -10,6 +10,7 @@ router.post(`/create`, authMiddleware, async (req, res) => {
    try {
       const { user } = req
       const room = await Room.create(req.body)
+      console.log(`Room created with: `, room._id.toString())
 
       user.connectedRoom = room._id
       await user.save()
