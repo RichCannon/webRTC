@@ -21,7 +21,7 @@ export const AlertModal = () => {
   }, [isVisible])
 
   return (
-    <Styles.Container type={type} isVisible={isVisible}>
+    <Styles.Container onClick={() => dispatch(appActions.hideAlert())} type={type} isVisible={isVisible}>
       {message}
     </Styles.Container>
   )

@@ -7,7 +7,8 @@ import * as Styles from "./RoomPageStyles"
 import { Preloader } from "../../components/Preloader/Preloader"
 import withPassword from "../../hocs/withPassword/withPassword"
 import { SocketContext } from "../../hooks/useSocket"
-import useWebRTC, { LOCAL_VIDEO, TRACKS_TYPES } from "../../hooks/useWebRTC"
+import useWebRTC from "../../hooks/useWebRTC"
+import { LOCAL_VIDEO, TRACKS_TYPES } from "../../hooks/constants"
 import { myUserDataSelector } from "../../logic/userLogic/userSelector"
 
 

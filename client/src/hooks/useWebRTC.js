@@ -3,16 +3,8 @@ import freeice from 'freeice'
 
 import ACTIONS from "../common/socket/actions"
 import useStateWithCallback from './useStateWithCallback'
+import { DEFAULT_TRACKS_CONTROL_STATE, LOCAL_VIDEO, TRACKS_TYPES } from "./constants"
 
-export const LOCAL_VIDEO = `LOCAL_VIDEO`
-export const TRACKS_TYPES = {
-   AUDIO: `audio`,
-   VIDEO: `video`,
-}
-const DEFAULT_TRACKS_CONTROL_STATE = {
-   [TRACKS_TYPES.AUDIO]: true,
-   [TRACKS_TYPES.VIDEO]: true,
-}
 
 export default function useWebRTC({ roomID, socket }) {
    const [clients, updateClients] = useStateWithCallback([])

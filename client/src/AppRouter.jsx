@@ -5,11 +5,12 @@ import { useSelector, useDispatch } from 'react-redux';
 // Pages
 import LoginPage from "./pages/LoginPage/LoginPage";
 import RegisterPage from "./pages/RegisterPage/RegisterPage";
-import { STORAGE_NAME, userActions } from './logic/userLogic/userReducer'
+import { userActions } from './logic/userLogic/userReducer'
 import { currentUser } from "./logic/userLogic/userSelector";
 import { PrivateRouter } from './pages/PrivateRouter/PrivateRouter';
 import { Preloader } from './components/Preloader/Preloader';
 import { Layout } from './components/Layout/Layout';
+import { USER_LOCAL_STORAGE_NAME } from './hooks/constants';
 
 
 
@@ -21,7 +22,7 @@ export const AppRouter = () => {
 
 
    useEffect(() => {
-      const userData = JSON.parse(localStorage.getItem(STORAGE_NAME))
+      const userData = JSON.parse(localStorage.getItem(USER_LOCAL_STORAGE_NAME))
       if (userData) {
          dispatch(userActions.setCurrentUser(userData))
       }

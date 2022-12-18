@@ -14,5 +14,6 @@ export const Container = styled.div`
   transition: .5s top;
   box-shadow: 0px 5px 10px 2px rgba(34, 60, 80, 0.2);
   color: ${({ theme }) => theme.text.primary};
-  overflow: hidden
+  overflow: hidden;
+  cursor: pointer;
 `

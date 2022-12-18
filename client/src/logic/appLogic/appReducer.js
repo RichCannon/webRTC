@@ -18,7 +18,7 @@ const appReducer = createSlice({
       state.alertData = { message: payload.message, type: payload?.type || ALERT_TYPE.ERROR, isVisible: true }
     },
     hideAlert(state) {
-      state.alertData = { isVisible: false }
+      state.alertData = { ...state.alertData, isVisible: false }
     }
   },
 })

@@ -34,7 +34,6 @@ const LoginPage = () => {
       if (myUserDataError) {
          setLoginErrors(errors => ({ ...errors, [myUserDataError.param]: myUserDataError.message }))
          if (myUserDataError.param === `alert`) {
-            console.log(`error`)
             appActions.showAlert(myUserDataError.message)
          }
       }
