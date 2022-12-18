@@ -185,7 +185,7 @@ io.on('connection', async (socket) => {
 
    // Mute implementation
    socket.on(ACTIONS.MUTE_TRACK, ({ tracksControl, usersInRoom }) => {
-      socket.tracksControl = tracksControl
+      socket.tracksControl = tracksControl // Adding for user socket instance mute control object
       usersInRoom.forEach(clientID => {
          io.to(clientID).emit(ACTIONS.MUTE_TRACK, {
             id: socket.id,

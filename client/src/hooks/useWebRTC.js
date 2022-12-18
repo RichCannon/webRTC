@@ -123,7 +123,8 @@ export default function useWebRTC({ roomID, socket }) {
             // new RTCSessionDescription - For capability with another browsers
             new RTCSessionDescription(remoteDescription)
          )
-
+         // If user have in his instance object with his mute status, we use this
+         // If does nothing and mute object in socker instance doesn't exit, we just use default mute object
          setUsersInRoom(users => ({ ...users, [peerID]: { ...userData, ...(userData.tracksControl || DEFAULT_TRACKS_CONTROL_STATE) } }))
 
          if (remoteDescription.type === `offer`) {
