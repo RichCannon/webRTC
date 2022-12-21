@@ -46,8 +46,12 @@ const RoomPage = () => {
                            muted={isCurrentUserTrack} />
                         <div>{isCurrentUserTrack ? (myUserData.userName || `Loading...`) : usersInRoom[clientID]?.userName}</div>
                         {isCurrentUserTrack && <>
-                           <button onClick={() => controlTracks(TRACKS_TYPES.AUDIO, mutedAudio)}>{mutedVideo ? `START AUDIO` : `STOP AUDIO`}</button>
-                           <button onClick={() => controlTracks(TRACKS_TYPES.VIDEO, mutedVideo)}>{mutedVideo ? `STOP VIDEO` : `STOP VIDEO`}</button>
+                           <button onClick={() => controlTracks(TRACKS_TYPES.AUDIO, mutedAudio)}>
+                              {mutedAudio ? `START AUDIO` : `STOP AUDIO`}
+                           </button>
+                           <button onClick={() => controlTracks(TRACKS_TYPES.VIDEO, mutedVideo)}>
+                              {mutedVideo ? `START VIDEO` : `STOP VIDEO`}
+                           </button>
                         </>}
                      </Styled.VideoCard>
                   )

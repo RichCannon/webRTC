@@ -12,7 +12,9 @@ import { validators } from '../../utils/validators'
 import { useEffect } from 'react'
 import { appActions } from '../../logic/appLogic/appReducer'
 import { INIT_INPUT_LOGIN_VALUES } from './constants'
-import { isEmptyObjectValues } from '../../utils/utils'
+import { validFormCheck } from '../../utils/utils'
+
+
 
 
 
@@ -40,24 +42,26 @@ const LoginPage = () => {
    }, [myUserDataError])
 
    const onLogInClick = () => {
-      const errors = {}
-      errors.login = validators.maxLength(10, loginValues.login)
-      errors.login = validators.required(loginValues.login)
-      errors.password = validators.maxLength(20, loginValues.password)
-      errors.password = validators.required(loginValues.password)
-      
-      if (isEmptyObjectValues(errors)) {
-         dispatch(loginUserRequest(loginValues)).unwrap()
-            .then(response => {
-               history.replace('/')
-            })
-            .catch(e => {
-               console.error(e)
-            })
+      const validSchema = {
+         login: [validators.required, validators.maxLength(10)],
+         password: [validators.required, validators.maxLength(20)]
       }
-      else {
+
+      const errors = validFormCheck(loginValues, validSchema)
+
+      if (errors) {
          setLoginErrors(errors)
+         return
       }
+
+      dispatch(loginUserRequest(loginValues)).unwrap()
+         .then(response => {
+            history.replace('/')
+         })
+         .catch(e => {
+            console.error(e)
+         })
+
    }
 
    const handleClickResetInputError = ({ target: { name } }) => {
