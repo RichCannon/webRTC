@@ -1,36 +1,37 @@
-export const isEmptyObject = (obj) => {
+type ErrosT<T extends string | number | symbol> = {[key in T]?: string}
+
+export const isEmptyObject = (obj: any) => {
     for (let key in obj) {
         return false;
     }
     return true;
 }
 
-export const isEmptyObjectValues = (obj) => {
+export const isEmptyObjectValues = (obj: any) => {
     for (let key in obj) {
         if (obj[key]) return false
     }
     return true;
 }
 
+type ValidAndNamesT = (value: string | undefined) => string | null
 
-
-export const validFormCheck = (values, validAndNames) => {
-    const errors = {}
-    console.log(validAndNames)
-    
-    for (const [name, validators] of Object.entries(validAndNames)) {
+export function validFormCheck<T extends string | number | symbol>(values: {[key in T]: string}, validAndNames: {[key in T]: ValidAndNamesT}): ErrosT<T> | null {
+    const errors: ErrosT<T> = {}
+ 
+    for (const [name, validators] of Object.entries<ValidAndNamesT>(validAndNames)) {
         if (!Array.isArray(validators)) {
-            const error = validators(values[name])
+            const error = validators(values[name as T])
             if (error) {
-                errors[name] = error
+                errors[name as T] = error
             }
         }
         else {
             for (let i = 0; i < validators.length; i++) {
                 const validator = validators[i]
-                const error = validator(values[name])
+                const error = validator(values[name as T])
                 if (error) {
-                    errors[name] = error
+                    errors[name as T] = error
                     break
                 }
             }

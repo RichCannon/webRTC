@@ -1,13 +1,10 @@
-import { io } from 'socket.io-client'
+import { io} from 'socket.io-client'
 
-const options = {
-   "force new connection": true,
-   reconnectionAttempts: "Infinity",
+const socket = io('http://localhost:3001', {
+   forceNew: true,
    timeout: 10000,
    transports: ["websocket"],
    auth: { token: `userToken` }
-}
-
-const socket = io('http://localhost:3001', options)
+})
 
 export default socket

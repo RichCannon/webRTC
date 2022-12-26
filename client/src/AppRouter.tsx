@@ -22,9 +22,10 @@ export const AppRouter = () => {
 
 
    useEffect(() => {
-      const userData = JSON.parse(localStorage.getItem(USER_LOCAL_STORAGE_NAME))
+      const userData = localStorage.getItem(USER_LOCAL_STORAGE_NAME)
       if (userData) {
-         dispatch(userActions.setCurrentUser(userData))
+         const userDataParsed = JSON.parse(userData)
+         dispatch(userActions.setCurrentUser(userDataParsed))
       }
       setIsReady(true)
    }, [])
