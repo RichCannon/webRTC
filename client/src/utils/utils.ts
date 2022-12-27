@@ -1,7 +1,8 @@
 type ErrosT<T extends string | number | symbol> = {[key in T]?: string}
+type ValidAndNamesT = ((value: string | undefined) => string | null)[] | ((value: string | undefined) => string | null)
 
 export const isEmptyObject = (obj: any) => {
-    for (let key in obj) {
+    for (let _ in obj) {
         return false;
     }
     return true;
@@ -14,7 +15,6 @@ export const isEmptyObjectValues = (obj: any) => {
     return true;
 }
 
-type ValidAndNamesT = (value: string | undefined) => string | null
 
 export function validFormCheck<T extends string | number | symbol>(values: {[key in T]: string}, validAndNames: {[key in T]: ValidAndNamesT}): ErrosT<T> | null {
     const errors: ErrosT<T> = {}

@@ -13,6 +13,7 @@ import { MyButton } from '../../components/MyButton/MyButton'
 import { createRoomSelector } from '../../logic/roomLogic/roomSelector'
 import RoomList from './components/RoomList/RoomList'
 import { USER_LOCAL_STORAGE_NAME } from '../../hooks/constants'
+import { OnChangeT } from '../../types/common'
 
 
 
@@ -29,7 +30,7 @@ const MainPage = memo(() => {
    const history = useHistory()
    const rootNode = useRef()
 
-   const onChangeHandler = ({ name, value }) => {
+   const onChangeHandler = ({ name, value } : {name: string, value: string}) => {
       setCreateRoomValues((values) => ({ ...values, [name]: value }))
    }
 

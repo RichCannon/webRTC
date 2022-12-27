@@ -1,12 +1,17 @@
 import styled from "styled-components";
+import { ButtonsType } from "./MyButton";
 
-export const Container = styled.button`
+type ButtonP = {
+  styleType: ButtonsType
+}
+
+export const Button = styled.button<ButtonP>`
   display:flex;
   align-content: center;
   justify-content:center;
   background-color: transparent;
-  border: ${({ type, theme }) => `2px solid ${theme.colors[type]}`};
-  color: ${({ type, theme }) => `${theme.colors[type]}`};
+  border: ${({ styleType, theme }) => `2px solid ${theme.colors[styleType]}`};
+  color: ${({ styleType, theme }) => `${theme.colors[styleType]}`};
   padding: .7em;
   font-size: 1rem;
   font-weight: bold;

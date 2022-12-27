@@ -13,6 +13,7 @@ import { useEffect } from 'react'
 import { appActions } from '../../logic/appLogic/appReducer'
 import { INIT_INPUT_LOGIN_VALUES } from './constants'
 import { validFormCheck } from '../../utils/utils'
+import { OnChangeT, OnClickT } from '../../types/common'
 
 
 
@@ -21,14 +22,13 @@ import { validFormCheck } from '../../utils/utils'
 const LoginPage = () => {
 
    const [loginValues, setLoginValues] = useState(INIT_INPUT_LOGIN_VALUES)
-   const [loginErrors, setLoginErrors] = useState({})
+   const [loginErrors, setLoginErrors] = useState<Partial<typeof INIT_INPUT_LOGIN_VALUES>>({})
    const dispatch = useDispatch()
    const history = useHistory()
+
    const { fetching: myUserDataFetching, error: myUserDataError } = useSelector(myUserDataSelector)
 
-   const onChangeHandler = (e) => {
-      const name = e.currentTarget.name
-      const value = e.currentTarget.value
+   const onChangeHandler: OnChangeT = ({currentTarget: {value, name}}) => {
       setLoginValues(values => ({ ...values, [name]: value }))
    }
 
@@ -64,8 +64,8 @@ const LoginPage = () => {
 
    }
 
-   const handleClickResetInputError = ({ target: { name } }) => {
-      setLoginErrors(errors => ({ ...errors, [name]: null }))
+   const handleClickResetInputError: OnClickT = ({currentTarget: {name}}) => {
+      setLoginErrors(errors => ({ ...errors, [name]: null })) 
    }
 
    return (

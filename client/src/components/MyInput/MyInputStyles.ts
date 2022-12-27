@@ -1,8 +1,14 @@
 import styled from "styled-components";
+import { InputStyles } from "./MyInput";
 
 export const Container = styled.div`
 
 `
+
+
+type InputProps = {
+  styleType: InputStyles
+}
 
 export const Wrapper = styled.div`
   position: relative;
@@ -17,7 +23,7 @@ export const Wrapper = styled.div`
   
 `
 
-export const Input = styled.input`
+export const Input = styled.input<InputProps>`
   font-size: 1rem;
   padding: .7em;
   background-color: transparent;

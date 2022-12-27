@@ -1,23 +1,26 @@
-import React from 'react'
+import React, { FC } from 'react'
 
 import { Preloader } from '../Preloader/Preloader'
 import * as Styles from './MyButtonStyles'
 
-const BUTTON_TYPES = {
-  secondary: `secondary`,
-  error: `error`,
-  ok: `ok`
+export type ButtonsType = `secondary` | `error` |  `ok`
+
+type MyButtonP =  React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> & {
+  label: string,
+  styleType: ButtonsType,
+  loading: boolean,
 }
 
-export const MyButton = ({ label, type = BUTTON_TYPES.secondary, onClick, disabled = false, loading = false }) => {
+export const MyButton:FC<MyButtonP> = ({ label, styleType = `secondary`, loading = false, ...defaultProps }) => {
   return (
-    <Styles.Container onClick={onClick} type={type} disabled={disabled} >
+    <Styles.Button styleType={styleType} {...defaultProps} >
       {!loading
         ? <span>
           {label}
         </span>
         : <Preloader size={`1em`} />
       }
-    </Styles.Container>
+      <button/>
+    </Styles.Button>
   )
 }

@@ -1,12 +1,19 @@
+import { FC } from 'react'
+import { OnChangeT } from '../../types/common'
 import { MyButton } from '../MyButton/MyButton'
 import { MyInput } from '../MyInput/MyInput'
 import * as Styles from './CreateRoomStyles'
 
-const CreateRoomModal = ({ values, onChangeHandler, onAcceptClick, fetching }) => {
+type CreateRoomModalT = {
+   onChangeHandler: (props:  {name: string, value: string}) => void,
+   values:  {name: string, password: string},
+   onAcceptClick: () => void,
+   fetching: boolean
+}
 
-   const onChange = (e) => {
-      const name = e.currentTarget.name
-      const value = e.currentTarget.value
+const CreateRoomModal:FC<CreateRoomModalT> = ({ values, onChangeHandler, onAcceptClick, fetching }) => {
+
+   const onChange: OnChangeT = ({currentTarget: {name, value}}) => {
       onChangeHandler({ value, name })
    }
 
