@@ -1,23 +1,44 @@
+import { FC } from 'react'
+import { OnChangeT, OnSubmitT } from '../../types/common'
 import { MyButton } from '../MyButton/MyButton'
 import { MyInput } from '../MyInput/MyInput'
-import * as Styles from './EnterPassSceneStyles'
+import * as Styled from './EnterPassSceneStyles'
 
-const EnterPassScene = ({ roomValues, onChange, onSendRoomPasswordClick, isLoading }) => {
+type EnterPassScene = {
+   roomValues: {
+      password: string,
+   },
+   onChange: OnChangeT,
+   onSendRoomPasswordClick: () => void,
+   isLoading: boolean
+}
 
+const EnterPassScene: FC<EnterPassScene> = ({ roomValues, onChange, onSendRoomPasswordClick, isLoading }) => {
+
+
+   const onSubmit: OnSubmitT = (e) => {
+      e.preventDefault()
+      onSendRoomPasswordClick()
+   }
 
    return (
-      <Styles.Container>
-         <Styles.Wrapper>
-            <Styles.H1>{`Enter room password`}</Styles.H1>
-            <MyInput name={`password`}
-               disabled={isLoading}
-               type={'password'}
-               placeholder={`Password`}
-               value={roomValues.password}
-               onChange={onChange} />
-            <MyButton loading={isLoading} label={`Send password`} disabled={isLoading} onClick={onSendRoomPasswordClick} />
-         </Styles.Wrapper>
-      </Styles.Container>
+      <Styled.Container>
+         <Styled.Wrapper>
+            <Styled.H1>{`Enter room password`}</Styled.H1>
+            <Styled.Form onSubmit={onSubmit}>
+               <MyInput name={`password`}
+                  disabled={isLoading}
+                  type={'password'}
+                  placeholder={`Password`}
+                  value={roomValues.password}
+                  onChange={onChange} />
+               <MyButton type='submit'
+                  loading={isLoading}
+                  label={`Send password`}
+                  disabled={isLoading} />
+            </Styled.Form>
+         </Styled.Wrapper>
+      </Styled.Container>
    )
 }
 

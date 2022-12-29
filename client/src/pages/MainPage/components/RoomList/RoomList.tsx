@@ -1,21 +1,21 @@
 import { memo } from 'react'
 import { MyButton } from '../../../../components/MyButton/MyButton'
-import * as Styles from './RoomListStyles'
+import * as Styled from './RoomListStyles'
 
 const RoomList = ({ rooms = [], roomHandler }) => {
 
   //console.log(`rooms`,rooms)
 
   return (
-    <Styles.Container>
+    <Styled.Container>
       {rooms.map(room => (
-        <Styles.RoomCard key={`ROOM_CARD_${room.id}`}>
-          <Styles.RoomName>{room.name}</Styles.RoomName>
-          <Styles.RoomName>{room.numOfJoined}</Styles.RoomName>
+        <Styled.RoomCard key={`ROOM_CARD_${room.id}`}>
+          <Styled.RoomName>{room.name}</Styled.RoomName>
+          <Styled.RoomName>{room.numOfJoined}</Styled.RoomName>
           <MyButton label={`Join room`} onClick={() => roomHandler({ roomId: room.id })} />
-        </Styles.RoomCard>
+        </Styled.RoomCard>
       ))}
-    </Styles.Container>
+    </Styled.Container>
   )
 }
 

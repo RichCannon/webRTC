@@ -2,7 +2,11 @@ import styled from 'styled-components'
 
 const CIRCLES_SIZE = 0.25
 
-export const Container = styled.div`
+type ContainerP = {
+  size: string
+}
+
+export const Container = styled.div<ContainerP>`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   align-items: center;

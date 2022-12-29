@@ -8,7 +8,7 @@ import ACTIONS from '../../common/socket/actions'
 import { createRoomRequest } from '../../logic/roomLogic/roomReducer'
 import { userActions } from '../../logic/userLogic/userReducer'
 import { SocketContext } from '../../hooks/useSocket'
-import * as Styles from './MainPagesStyles'
+import * as Styled from './MainPagesStyles'
 import { MyButton } from '../../components/MyButton/MyButton'
 import { createRoomSelector } from '../../logic/roomLogic/roomSelector'
 import RoomList from './components/RoomList/RoomList'
@@ -95,8 +95,8 @@ const MainPage = () => {
 
 
    return (
-      <Styles.Container ref={rootNode}>
-         <Styles.H1>{`Available rooms`}</Styles.H1>
+      <Styled.Container ref={rootNode}>
+         <Styled.H1>{`Available rooms`}</Styled.H1>
          <MyButton label={`Create new room`} onClick={onCreateRoomClick} />
          <RoomList rooms={rooms} roomHandler={roomHandler} />
          <Modal onDissmissClick={onDissmissClick} isVisible={isVisible}>
@@ -107,7 +107,7 @@ const MainPage = () => {
                onChangeHandler={onChangeHandler} />
          </Modal>
          <MyButton label={`Logout`} onClick={onLogOutClick} />
-      </Styles.Container>
+      </Styled.Container>
    )
 }
 

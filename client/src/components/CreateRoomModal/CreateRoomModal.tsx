@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { OnChangeT, OnClickT } from '../../types/common'
+import { OnChangeT, OnClickT, OnSubmitT } from '../../types/common'
 import { MyButton } from '../MyButton/MyButton'
 import { MyInput } from '../MyInput/MyInput'
 import * as Styled from './CreateRoomStyles'
@@ -17,10 +17,15 @@ const CreateRoomModal: FC<CreateRoomModalT> = ({ values, onChangeHandler, onAcce
       onChangeHandler({ value, name })
    }
 
+   const onSubmit: OnSubmitT = (e) => {
+      e.preventDefault()
+      onAcceptClick(values)
+   }
+
    return (
       <Styled.Container >
          <Styled.H1>{`Create room`}</Styled.H1>
-         <Styled.Form>
+         <Styled.Form onSubmit={onSubmit}>
             <MyInput
                disabled={fetching}
                placeholder={"Name"}
@@ -36,8 +41,7 @@ const CreateRoomModal: FC<CreateRoomModalT> = ({ values, onChangeHandler, onAcce
                onChange={onChange} />
             <MyButton
                disabled={fetching}
-               label={`Accept`}
-               onClick={() => onAcceptClick(values)} />
+               label={`Accept`} />
          </Styled.Form>
       </Styled.Container>
    )

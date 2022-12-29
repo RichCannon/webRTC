@@ -36,7 +36,7 @@ type HandleRemovePeerProps = {
    peerID: string
 }
 
-type AddNewIceCandidateProps = { peerID:string, iceCandidate: RTCIceCandidateInit }
+type AddNewIceCandidateProps = { peerID: string, iceCandidate: RTCIceCandidateInit }
 
 export default function useWebRTC({ roomID, socket }: WebRTCProps) {
    const [clients, updateClients] = useStateWithCallback<ClientsStateT>([])
@@ -79,7 +79,7 @@ export default function useWebRTC({ roomID, socket }: WebRTCProps) {
             if (tracksNumber === 2) { // video and audio track received
                tracksNumber = 0
                addNewClient(peerID, () => {
-                  if (peerMediaElements.current[peerID] ) {
+                  if (peerMediaElements.current[peerID]) {
                      peerMediaElements.current[peerID]!.srcObject = remoteStream
                   }
                   else {

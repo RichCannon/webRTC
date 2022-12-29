@@ -1,7 +1,17 @@
-import * as Styles from './PreloaderStyles'
+import * as Styled from './PreloaderStyles'
 
-export const Preloader = ({ size = `1rem`}) => {
+export const Preloader = ({ size = `1rem` }) => {
    return (
-      <Styles.Container size={size}><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></Styles.Container>
+      <Styled.Container size={size}>
+         <div></div>
+         <div></div>
+         <div></div>
+         <div></div>
+         <div></div>
+         <div></div>
+         <div></div>
+         <div></div>
+         <div></div>
+      </Styled.Container>
    )
 }

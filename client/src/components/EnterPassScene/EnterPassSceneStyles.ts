@@ -5,7 +5,7 @@ export const Container = styled.div`
   flex: 1;
   flex-direction: column;
   justify-content: center;
-  align-items: center
+  align-items: center;
 `
 
 export const Wrapper = styled.div`
@@ -19,5 +19,14 @@ export const Wrapper = styled.div`
 
 export const H1 = styled.h1`
   width: 100%;
-  text-align: center
+  text-align: center;
+
+`
+
+export const Form = styled.form`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+  row-gap: 24px;
 `

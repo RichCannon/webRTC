@@ -15,7 +15,7 @@ import { myUserDataSelector } from "../../logic/userLogic/userSelector"
 const RoomPage = () => {
 
    const { socket } = useContext(SocketContext)
-   const { id: roomID } = useParams<{id: string}>()
+   const { id: roomID } = useParams<{ id: string }>()
    const { clients, provideMediaRef, usersInRoom, controlTracks, tracksControl, } = useWebRTC({ roomID, socket })
 
    const { data: myUserData, fetching: myUserDataFetching } = useSelector(myUserDataSelector)
@@ -40,7 +40,9 @@ const RoomPage = () => {
                         <video
                            width={`100%`}
                            height={`100%`}
-                           ref={instance => provideMediaRef(clientID, instance)}
+                           ref={instance => {
+                              if (instance) provideMediaRef(clientID, instance)
+                           }}
                            autoPlay
                            playsInline
                            muted={isCurrentUserTrack} />

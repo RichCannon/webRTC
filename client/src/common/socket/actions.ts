@@ -9,7 +9,6 @@ const ACTIONS = {
    ICE_CANDIDATE: 'ice-candidate',
    SESSION_DESCRIPTION: 'session-description',
    MUTE_TRACK: `mute-track`
-   
-}
+} as const
 
 export default ACTIONS

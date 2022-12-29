@@ -1,6 +1,11 @@
 import styled from 'styled-components'
 
-export const Container = styled.div`
+type ContainerP = {
+  type: string,
+  isVisible: boolean,
+}
+
+export const Container = styled.div<ContainerP>`
   align-items: center;
   display: flex;
   flex-wrap: wrap;

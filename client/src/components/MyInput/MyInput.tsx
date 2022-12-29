@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 
-import * as Styles from './MyInputStyles'
+import * as Styled from './MyInputStyles'
 
 
 export type InputStyles = `secondary` | `error` | `ok`
@@ -14,14 +14,14 @@ type MyInputT = {
 export const MyInput:FC<MyInputT> = ({ styleType = `secondary`, placeholder, errorText = ``, ...restProps }) => {
 
   return (
-    <Styles.Container>
-      <Styles.Wrapper>
-        <Styles.Input placeholder={" "} styleType={errorText ? `error` : styleType} {...restProps} />
-        <Styles.Label>{placeholder}</Styles.Label>
-      </Styles.Wrapper>
-      <Styles.ErrorWrapper>
+    <Styled.Container>
+      <Styled.Wrapper>
+        <Styled.Input placeholder={" "} styleType={errorText ? `error` : styleType} {...restProps} />
+        <Styled.Label>{placeholder}</Styled.Label>
+      </Styled.Wrapper>
+      <Styled.ErrorWrapper>
         {errorText}
-      </Styles.ErrorWrapper>
-    </Styles.Container>
+      </Styled.ErrorWrapper>
+    </Styled.Container>
   )
 }

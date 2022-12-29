@@ -1,22 +1,33 @@
+import { FC } from "react"
 import ReactDOM from "react-dom"
+import { OnClickT } from "../../types/common"
 
-import * as Styles from './ModalStyles'
+import * as Styled from './ModalStyles'
 
+type ModalP = {
+   isVisible?: boolean,
+   onDissmissClick: OnClickT<HTMLDivElement>,
+   children: JSX.Element,
+}
 
-const stopPropagation = (e) => e.stopPropagation()
+const stopPropagation: OnClickT<HTMLDivElement> = (e) => e.stopPropagation()
 
-const Modal = ({ isVisible, onDissmissClick, children }) => {
+const Modal:FC<ModalP> = ({ isVisible, onDissmissClick, children }) => {
 
    if (!isVisible) return null
+   
+   const portalEl = document.getElementById('portal')
+
+   if(!portalEl) return null
 
    return (
       ReactDOM.createPortal(
-         <Styles.Container  onClick={onDissmissClick}>
+         <Styled.Container  onClick={onDissmissClick}>
             <div onClick={stopPropagation}>
                {children}
             </div>
-         </Styles.Container>,
-         document.getElementById('portal'))
+         </Styled.Container>,
+         portalEl)
    )
 }
 
