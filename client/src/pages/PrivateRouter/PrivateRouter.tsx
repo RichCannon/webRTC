@@ -6,7 +6,7 @@ import useSocket, { SocketContext } from "../../hooks/useSocket"
 // Components
 import { Preloader } from "../../components/Preloader/Preloader"
 // Pages
-import { MainPage } from "../MainPage/MainPage"
+import  MainPage  from "../MainPage/MainPage"
 import { NotFoundPage } from "../NotFoundPage/NotFoundPage"
 import { RoomPage } from "../RoomPage/RoomPage"
 // Selectors

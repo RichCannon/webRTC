@@ -1,5 +1,6 @@
 type ErrosT<T extends string | number | symbol> = {[key in T]?: string}
-type ValidAndNamesT = ((value: string | undefined) => string | null)[] | ((value: string | undefined) => string | null)
+type DefaultValidFuncT = (value: string | undefined) => string | null
+type ValidAndNamesT = DefaultValidFuncT[] | DefaultValidFuncT
 
 export const isEmptyObject = (obj: any) => {
     for (let _ in obj) {

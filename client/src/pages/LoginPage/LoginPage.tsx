@@ -1,11 +1,11 @@
 import { Link } from 'react-router-dom'
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router'
 
 import { loginUserRequest } from '../../logic/userLogic/userReducer'
 import { MyButton } from '../../components/MyButton/MyButton'
-import * as Styles from './LoginPageStyles'
+import * as Styled from './LoginPageStyles'
 import { MyInput } from '../../components/MyInput/MyInput'
 import { myUserDataSelector } from '../../logic/userLogic/userSelector'
 import { validators } from '../../utils/validators'
@@ -13,7 +13,7 @@ import { useEffect } from 'react'
 import { appActions } from '../../logic/appLogic/appReducer'
 import { INIT_INPUT_LOGIN_VALUES } from './constants'
 import { validFormCheck } from '../../utils/utils'
-import { OnChangeT, OnClickT } from '../../types/common'
+import { OnChangeT, OnClickT, OnSubmitT } from '../../types/common'
 
 
 
@@ -28,7 +28,7 @@ const LoginPage = () => {
 
    const { fetching: myUserDataFetching, error: myUserDataError } = useSelector(myUserDataSelector)
 
-   const onChangeHandler: OnChangeT = ({currentTarget: {value, name}}) => {
+   const onChangeHandler: OnChangeT = ({ currentTarget: { value, name } }) => {
       setLoginValues(values => ({ ...values, [name]: value }))
    }
 
@@ -41,7 +41,8 @@ const LoginPage = () => {
       }
    }, [myUserDataError])
 
-   const onLogInClick = () => {
+   const onLogInClick: OnSubmitT = (e) => {
+      e.preventDefault();
       const validSchema = {
          login: [validators.required, validators.maxLength(10)],
          password: [validators.required, validators.maxLength(20)]
@@ -64,36 +65,43 @@ const LoginPage = () => {
 
    }
 
-   const handleClickResetInputError: OnClickT = ({currentTarget: {name}}) => {
-      setLoginErrors(errors => ({ ...errors, [name]: null })) 
+   const handleClickResetInputError: OnClickT = ({ currentTarget: { name } }) => {
+      setLoginErrors(errors => ({ ...errors, [name]: null }))
    }
 
    return (
-      <Styles.Container>
-         <Styles.Wrapper>
-            <Styles.H1>{`Login to Seer`}</Styles.H1>
-            <MyInput
-               errorText={loginErrors && loginErrors.login}
-               placeholder={"Login*"}
-               name={"login"}
-               value={loginValues["login"]}
-               onChange={onChangeHandler}
-               onClick={handleClickResetInputError} />
-            <MyInput
-               type={'password'}
-               errorText={loginErrors && loginErrors.password}
-               placeholder={"Password*"}
-               name={"password"}
-               value={loginValues["password"]}
-               onChange={onChangeHandler}
-               onClick={handleClickResetInputError}
-            />
-            <MyButton loading={myUserDataFetching} disabled={myUserDataFetching} label={`Login`} onClick={onLogInClick} />
-            <Styles.LinkToRegister>
+      <Styled.Container>
+         <Styled.Wrapper>
+            <Styled.H1>{`Login to Seer`}</Styled.H1>
+            <Styled.Form onSubmit={onLogInClick}>
+               <MyInput
+                  errorText={loginErrors && loginErrors.login}
+                  placeholder={"Login*"}
+                  name={"login"}
+                  value={loginValues["login"]}
+                  onChange={onChangeHandler}
+                  onClick={handleClickResetInputError} />
+               <MyInput
+                  type={'password'}
+                  errorText={loginErrors && loginErrors.password}
+                  placeholder={"Password*"}
+                  name={"password"}
+                  value={loginValues["password"]}
+                  onChange={onChangeHandler}
+                  onClick={handleClickResetInputError}
+               />
+               <MyButton
+                  type='submit'
+                  loading={myUserDataFetching}
+                  disabled={myUserDataFetching}
+                  label={`Login`}
+                   />
+            </Styled.Form>
+            <Styled.LinkToRegister>
                <Link to={`/register`}>{`Don't have an account? Click to register!`}</Link>
-            </Styles.LinkToRegister>
-         </Styles.Wrapper>
-      </Styles.Container>
+            </Styled.LinkToRegister>
+         </Styled.Wrapper>
+      </Styled.Container>
    )
 }
 

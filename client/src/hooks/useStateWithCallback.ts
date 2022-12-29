@@ -1,10 +1,12 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 
-const useStateWithCallback = initState => {
-   const [state, setState] = useState(initState)
-   const cbRef = useRef(null)
+type NewStateT<T> = T extends Function ? never : (T | ((prop: T) => T))
 
-   const updateState = useCallback((newState, cb) => {
+export default function useStateWithCallback<T>(initState: T) {
+   const [state, setState] = useState<T>(initState)
+   const cbRef = useRef<((prop: T) => void) | undefined>(undefined)
+
+   const updateState = useCallback((newState: NewStateT<T>, cb?: (prop: T) => void) => {
       cbRef.current = cb
       setState(prev => typeof newState === `function` ? newState(prev) : newState)
    }, [])
@@ -12,11 +14,9 @@ const useStateWithCallback = initState => {
    useEffect(() => {
       if (cbRef.current) {
          cbRef.current(state)
-         cbRef.current = null
+         cbRef.current = undefined
       }
    }, [state])
 
-   return [state, updateState]
+   return [state, updateState] as const
 }
-
-export default useStateWithCallback

@@ -7,5 +7,5 @@ export const validators = {
   
   email: (value: string | undefined) => value && /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value) ? null : `Wrong email format!`,
   
-  sameValues: (value1: string , errorText: string | undefined ) => (value2: string ) => value1 === value2 ? null : errorText,
+  sameValues: (value1: string | undefined , errorText: string ) => (value2: string | undefined ) => value1 === value2 ? null : errorText,
 } as const

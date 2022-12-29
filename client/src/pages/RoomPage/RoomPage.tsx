@@ -15,7 +15,7 @@ import { myUserDataSelector } from "../../logic/userLogic/userSelector"
 const RoomPage = () => {
 
    const { socket } = useContext(SocketContext)
-   const { id: roomID } = useParams()
+   const { id: roomID } = useParams<{id: string}>()
    const { clients, provideMediaRef, usersInRoom, controlTracks, tracksControl, } = useWebRTC({ roomID, socket })
 
    const { data: myUserData, fetching: myUserDataFetching } = useSelector(myUserDataSelector)

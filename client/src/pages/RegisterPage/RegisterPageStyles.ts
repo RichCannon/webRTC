@@ -32,3 +32,9 @@ export const LinkToRegister = styled.span`
     height: 1.2em;
   } 
 `
+
+export const Form = styled.form`
+  display:flex;
+  flex-direction:column;
+  row-gap: 20px;
+`

@@ -1,29 +1,30 @@
 import { useState, useEffect, createContext } from 'react'
-import { io } from 'socket.io-client'
+import { io, Socket } from 'socket.io-client'
 
-const noop = () => null
-
-const contextData = {
-   socket: noop
+type SocketContextT = {
+   socket: null | Socket
 }
 
-export const SocketContext = createContext(contextData)
+const noop = () => null 
 
-const useSocket = (token) => {
+const contextData = {
+   socket: null
+}
 
-   const [socket, setSocket] = useState()
+export const SocketContext = createContext<SocketContextT>(contextData)
 
-   const options = {
-      "force new connection": true,
-      reconnectionAttempts: "Infinity",
-      timeout: 10000,
-      transports: ["websocket"],
-      auth: { token }
-   }
+const useSocket = (token: string) => {
+
+   const [socket, setSocket] = useState<Socket | null>(null)
 
    useEffect(() => {
 
-      const socket = io('http://localhost:3001', options)
+      const socket = io('http://localhost:3001', {
+         forceNew: true,
+         timeout: 10000,
+         transports: ["websocket"],
+         auth: { token }
+      })
       setSocket(socket)
    }, [])
 

@@ -13,24 +13,26 @@ import { MyButton } from '../../components/MyButton/MyButton'
 import { createRoomSelector } from '../../logic/roomLogic/roomSelector'
 import RoomList from './components/RoomList/RoomList'
 import { USER_LOCAL_STORAGE_NAME } from '../../hooks/constants'
-import { OnChangeT } from '../../types/common'
+
+const INIT_CREATE_ROOM_VALUES = {
+   name: ``,
+   password: ``
+}
 
 
-
-
-const MainPage = memo(() => {
+const MainPage = () => {
 
    const { socket } = useContext(SocketContext)
 
-   const [createRoomValues, setCreateRoomValues] = useState({})
+   const [createRoomValues, setCreateRoomValues] = useState(INIT_CREATE_ROOM_VALUES)
    const [isVisible, setIsVisible] = useState(false)
    const [rooms, updateRooms] = useState([])
    const { fetching: createRoomFetching } = useSelector(createRoomSelector)
    const dispatch = useDispatch()
    const history = useHistory()
-   const rootNode = useRef()
+   const rootNode = useRef<HTMLDivElement>(null)
 
-   const onChangeHandler = ({ name, value } : {name: string, value: string}) => {
+   const onChangeHandler = ({ name, value }: { name: string, value: string }) => {
       setCreateRoomValues((values) => ({ ...values, [name]: value }))
    }
 
@@ -54,12 +56,12 @@ const MainPage = memo(() => {
 
    useEffect(() => {
       if (!isVisible && rootNode.current) {
-         setCreateRoomValues({})
+         setCreateRoomValues(INIT_CREATE_ROOM_VALUES)
       }
    }, [isVisible])
 
    // Creating new room
-   const roomHandler = ({ roomId }) => {
+   const roomHandler = ({ roomId }: { roomId: string }) => {
       history.push(`/room/${roomId}`)
    }
 
@@ -71,7 +73,7 @@ const MainPage = memo(() => {
       setIsVisible(false)
    }
 
-   const onAcceptClick = (values) => {
+   const onAcceptClick = (values: typeof INIT_CREATE_ROOM_VALUES) => {
       dispatch(createRoomRequest(values)).unwrap()
          .then(response => {
             roomHandler({ roomId: response._id })
@@ -91,7 +93,7 @@ const MainPage = memo(() => {
       localStorage.removeItem(USER_LOCAL_STORAGE_NAME)
    }
 
-   
+
    return (
       <Styles.Container ref={rootNode}>
          <Styles.H1>{`Available rooms`}</Styles.H1>
@@ -107,6 +109,6 @@ const MainPage = memo(() => {
          <MyButton label={`Logout`} onClick={onLogOutClick} />
       </Styles.Container>
    )
-})
+}
 
-export { MainPage }
+export default memo(MainPage) 

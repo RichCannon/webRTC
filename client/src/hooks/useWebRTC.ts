@@ -4,28 +4,60 @@ import freeice from 'freeice'
 import ACTIONS from "../common/socket/actions"
 import useStateWithCallback from './useStateWithCallback'
 import { DEFAULT_TRACKS_CONTROL_STATE, LOCAL_VIDEO, TRACKS_TYPES } from "./constants"
+import { Socket } from "socket.io-client"
 
+type WebRTCProps = {
+   roomID: string,
+   socket: Socket,
+}
 
-export default function useWebRTC({ roomID, socket }) {
-   const [clients, updateClients] = useStateWithCallback([])
-   const [usersInRoom, setUsersInRoom] = useState({})
+type ClientsStateT = string[]
+
+type UsersInRoomStateT = {
+   [key: string]: {
+      userName: string,
+      audio: boolean,
+      video: boolean,
+
+   }
+}
+
+type SetRemoteMediaProps = {
+   peerID: string,
+   sessionDescription: RTCSessionDescriptionInit,
+   userData: { userName: string, tracksControl: { audio: boolean, video: boolean } }
+}
+
+type MuteTrackHandleProps = {
+   id: string, tracksControl: { audio: boolean, video: boolean }
+}
+
+type HandleRemovePeerProps = {
+   peerID: string
+}
+
+type AddNewIceCandidateProps = { peerID:string, iceCandidate: RTCIceCandidateInit }
+
+export default function useWebRTC({ roomID, socket }: WebRTCProps) {
+   const [clients, updateClients] = useStateWithCallback<ClientsStateT>([])
+   const [usersInRoom, setUsersInRoom] = useState<UsersInRoomStateT>({})
    const [tracksControl, setTracksControl] = useState(DEFAULT_TRACKS_CONTROL_STATE)
 
-   const addNewClient = useCallback((newClient, cb) => {
-      updateClients(list => !list.includes(newClient) ? [...list, newClient] : list, cb);
+   const addNewClient = useCallback((newClient: string, cb: ((prop: ClientsStateT) => void)) => {
+      updateClients((list: ClientsStateT) => !list.includes(newClient) ? [...list, newClient] : list, cb)
    }, [updateClients]);
 
    // Store all peer connection which connects current client and all users in room
-   const peerConnections = useRef({})
+   const peerConnections = useRef<{ [key: string]: RTCPeerConnection }>({})
    // This will be ref to a my medial element (current client)
-   const localMediaStream = useRef({})
+   const localMediaStream = useRef<MediaStream | null>(null)
    // This will be link to all peer medial elements (<video/> on current client)
-   const peerMediaElements = useRef({
+   const peerMediaElements = useRef<{ [key: string]: HTMLVideoElement | null }>({
       [LOCAL_VIDEO]: null
    })
 
    useEffect(() => {
-      const handleNewPeer = async ({ peerID, createOffer }) => {
+      const handleNewPeer = async ({ peerID, createOffer }: { peerID: string, createOffer: RTCSessionDescriptionInit }) => {
          // If we are who already in room: $peerId - id of user which trying to connect to room where we also located
          // If we are who trying to connect: $peerId - id of user who already in room
 
@@ -47,15 +79,15 @@ export default function useWebRTC({ roomID, socket }) {
             if (tracksNumber === 2) { // video and audio track received
                tracksNumber = 0
                addNewClient(peerID, () => {
-                  if (peerMediaElements.current[peerID]) {
-                     peerMediaElements.current[peerID].srcObject = remoteStream
+                  if (peerMediaElements.current[peerID] ) {
+                     peerMediaElements.current[peerID]!.srcObject = remoteStream
                   }
                   else {
                      // Fixing long render in case of many clients
                      let settled = false
                      const interval = setInterval(() => {
                         if (peerMediaElements.current[peerID]) {
-                           peerMediaElements.current[peerID].srcObject = remoteStream
+                           peerMediaElements.current[peerID]!.srcObject = remoteStream
                            settled = true
                         }
 
@@ -80,8 +112,8 @@ export default function useWebRTC({ roomID, socket }) {
          }
 
          // There we adding content that will be send (from MediaStream we are getting MediaStreamTrack for video and audio)
-         localMediaStream.current.getTracks().forEach(track => {
-            peerConnections.current[peerID].addTrack(track, localMediaStream.current)
+         localMediaStream.current!.getTracks().forEach(track => {
+            peerConnections.current[peerID].addTrack(track, localMediaStream.current!)
          })
 
          if (createOffer) { // If we are who trying to connect
@@ -91,7 +123,7 @@ export default function useWebRTC({ roomID, socket }) {
             // Also this will trigger onicecandidate action
             await peerConnections.current[peerID].setLocalDescription(offer)
 
-            // Here we send this cotent
+            // Here we send this content
             socket.emit(ACTIONS.RELAY_SDP, {
                peerID,
                sessionDescription: offer
@@ -108,7 +140,7 @@ export default function useWebRTC({ roomID, socket }) {
 
    useEffect(() => {
 
-      const setRemoteMedia = async ({ peerID, sessionDescription: remoteDescription, userData }) => {
+      const setRemoteMedia = async ({ peerID, sessionDescription: remoteDescription, userData }: SetRemoteMediaProps) => {
          // $peerID - id of who connecting (if (remoteDescription.type === `offer`))
          // $remoteDescription - data with stream
          await peerConnections.current[peerID]?.setRemoteDescription(
@@ -137,10 +169,13 @@ export default function useWebRTC({ roomID, socket }) {
    }, [])
 
    useEffect(() => {
-      socket.on(ACTIONS.ICE_CANDIDATE, ({ peerID, iceCandidate }) => {
+
+      const addNewIceCandidate = ({ peerID, iceCandidate }: AddNewIceCandidateProps) => {
          // $peerID - id of who connecting
          peerConnections.current[peerID].addIceCandidate(new RTCIceCandidate(iceCandidate))
-      })
+      }
+
+      socket.on(ACTIONS.ICE_CANDIDATE, addNewIceCandidate)
 
       return () => {
          socket.off(ACTIONS.ICE_CANDIDATE);
@@ -148,7 +183,7 @@ export default function useWebRTC({ roomID, socket }) {
    }, [])
 
    useEffect(() => {
-      const handleRemovePeer = ({ peerID }) => {
+      const handleRemovePeer = ({ peerID }: HandleRemovePeerProps) => {
          if (peerConnections.current[peerID]) {
             peerConnections.current[peerID].close()
          }
@@ -196,7 +231,7 @@ export default function useWebRTC({ roomID, socket }) {
 
       return () => {
          // Stop recording video when leave from room
-         if (localMediaStream.current.getTracks) {
+         if (localMediaStream.current) {
             console.log(`Stop recodring!`, localMediaStream.current)
             localMediaStream.current.getTracks().forEach(track => track.stop());
             // Leave from room
@@ -206,7 +241,7 @@ export default function useWebRTC({ roomID, socket }) {
 
    }, [roomID])
 
-   const provideMediaRef = useCallback((id, node) => {
+   const provideMediaRef = useCallback((id: string, node: HTMLVideoElement) => {
       peerMediaElements.current[id] = node
    }, [])
 
@@ -216,7 +251,7 @@ export default function useWebRTC({ roomID, socket }) {
       const tempTrackControls = { ...tracksControl, [muteType]: toogle }
       socket.emit(ACTIONS.MUTE_TRACK, { tracksControl: tempTrackControls, usersInRoom: Object.keys(usersInRoom) })
 
-      localMediaStream.current.getTracks &&
+      localMediaStream.current &&
          localMediaStream.current.getTracks().forEach(track => {
             if (track.kind === muteType) {
                track.enabled = toogle
@@ -227,7 +262,7 @@ export default function useWebRTC({ roomID, socket }) {
 
    // Control tracks mute status
    useEffect(() => {
-      const muteTrackHandle = ({ id, tracksControl }) => {
+      const muteTrackHandle = ({ id, tracksControl }: MuteTrackHandleProps) => {
          setUsersInRoom(prev => ({ ...prev, [id]: { ...prev[id], ...tracksControl } }))
       }
       socket.on(ACTIONS.MUTE_TRACK, muteTrackHandle)

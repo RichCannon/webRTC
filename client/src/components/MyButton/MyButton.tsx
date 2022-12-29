@@ -5,11 +5,11 @@ import * as Styles from './MyButtonStyles'
 
 export type ButtonsType = `secondary` | `error` |  `ok`
 
-type MyButtonP =  React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> & {
+type MyButtonP =   {
   label: string,
-  styleType: ButtonsType,
-  loading: boolean,
-}
+  styleType?: ButtonsType,
+  loading?: boolean,
+} & React.ButtonHTMLAttributes<HTMLButtonElement>
 
 export const MyButton:FC<MyButtonP> = ({ label, styleType = `secondary`, loading = false, ...defaultProps }) => {
   return (
@@ -20,7 +20,6 @@ export const MyButton:FC<MyButtonP> = ({ label, styleType = `secondary`, loading
         </span>
         : <Preloader size={`1em`} />
       }
-      <button/>
     </Styles.Button>
   )
 }

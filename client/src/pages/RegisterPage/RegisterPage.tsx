@@ -9,26 +9,28 @@ import { ALERT_TYPE } from '../../logic/appLogic/constants'
 
 import { registerUserRequest } from '../../logic/userLogic/userReducer'
 import { myUserDataSelector } from '../../logic/userLogic/userSelector'
+import { OnChangeT, OnSubmitT } from '../../types/common'
 import { validFormCheck } from '../../utils/utils'
 import { validators } from '../../utils/validators'
 import { INIT_INPUT_REGISTER_VALUES } from './constants'
-import * as Styles from './RegisterPageStyles'
+import * as Styled from './RegisterPageStyles'
 
 const RegisterPage = () => {
    const [registerValues, setRegisterValues] = useState(INIT_INPUT_REGISTER_VALUES)
-   const [registerValuesError, setRegisterValuesError] = useState({})
+   const [registerValuesError, setRegisterValuesError] = useState<Partial<typeof INIT_INPUT_REGISTER_VALUES>>({})
 
    const dispatch = useDispatch()
 
    const { fetching: myUserDataFetching, /* error: myUserDataError */ } = useSelector(myUserDataSelector)
 
-   const onChangeHandler = (e) => {
+   const onChangeHandler: OnChangeT = (e) => {
       const name = e.currentTarget.name
       const value = e.currentTarget.value
       setRegisterValues(values => ({ ...values, [name]: value }))
    }
 
-   const onRegisterClick = () => {
+   const onRegisterClick: OnSubmitT = (e) => {
+      e.preventDefault()
       const payload = { userName: registerValues.login, password: registerValues.password }
 
       const validSchema = {
@@ -57,32 +59,34 @@ const RegisterPage = () => {
    }
 
    return (
-      <Styles.Container>
-         <Styles.Wrapper>
-            <Styles.H1>{`Register to Seer`}</Styles.H1>
-            <MyInput
-               errorText={registerValuesError && registerValuesError.login}
-               placeholder={"Login*"} name={"login"}
-               value={registerValues.login}
-               onChange={onChangeHandler} />
-            <MyInput
-               errorText={registerValuesError && registerValuesError.password}
-               placeholder={"Password*"}
-               name={"password"}
-               value={registerValues.password}
-               onChange={onChangeHandler} />
-            <MyInput
-               errorText={registerValuesError && registerValuesError.repeatPassword}
-               placeholder={"Repeat password*"}
-               name={"repeatPassword"}
-               value={registerValues.repeatPassword}
-               onChange={onChangeHandler} />
-            <MyButton loading={myUserDataFetching} label={`Register`} onClick={onRegisterClick} />
-            <Styles.LinkToRegister>
+      <Styled.Container>
+         <Styled.Wrapper>
+            <Styled.H1>{`Register to Seer`}</Styled.H1>
+            <Styled.Form onSubmit={onRegisterClick}>
+               <MyInput
+                  errorText={registerValuesError && registerValuesError.login}
+                  placeholder={"Login*"} name={"login"}
+                  value={registerValues.login}
+                  onChange={onChangeHandler} />
+               <MyInput
+                  errorText={registerValuesError && registerValuesError.password}
+                  placeholder={"Password*"}
+                  name={"password"}
+                  value={registerValues.password}
+                  onChange={onChangeHandler} />
+               <MyInput
+                  errorText={registerValuesError && registerValuesError.repeatPassword}
+                  placeholder={"Repeat password*"}
+                  name={"repeatPassword"}
+                  value={registerValues.repeatPassword}
+                  onChange={onChangeHandler} />
+               <MyButton loading={myUserDataFetching} label={`Register`}/>
+            </Styled.Form>
+            <Styled.LinkToRegister>
                <Link to={`/login`}>{`Already have account? Click to login!`}</Link>
-            </Styles.LinkToRegister>
-         </Styles.Wrapper>
-      </Styles.Container>
+            </Styled.LinkToRegister>
+         </Styled.Wrapper>
+      </Styled.Container >
    )
 }
 
