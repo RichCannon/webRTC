@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { ComponentType, useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useParams } from "react-router"
 
@@ -8,9 +8,10 @@ import { checkRoomSelector, enterRoomPassSelector } from "../../logic/roomLogic/
 import { Preloader } from '../../components/Preloader/Preloader'
 import { EnterPassScene } from "../../components/EnterPassScene/EnterPassScene"
 import { appActions } from "../../logic/appLogic/appReducer"
+import { OnChangeT } from "../../types/common"
 
 
-const withPassword = Component => ({ ...props }) => {
+const withPassword = (Component: ComponentType) => ({ ...props }) => {
 
    const { data: checkRoomData, fetching: checkRoomFetching, error: checkRoomError } = useSelector(checkRoomSelector)
    const { /* data: enterRoomData, */ fetching: enterRoomFetching, error: enterRoomError } = useSelector(enterRoomPassSelector)
@@ -20,10 +21,10 @@ const withPassword = Component => ({ ...props }) => {
       console.error(enterRoomError)
    }
 
-   const { id: roomId } = useParams()
+   const { id: roomId } = useParams<{id: string}>()
    const [roomValues, setRoomValues] = useState({ password: `` })
 
-   const onChange = ({ target: { value, name } }) => {
+   const onChange:OnChangeT = ({ target: { value, name } }) => {
       setRoomValues((values) => ({ ...values, [name]: value }))
    }
 

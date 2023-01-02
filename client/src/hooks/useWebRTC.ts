@@ -11,6 +11,8 @@ type WebRTCProps = {
    socket: Socket,
 }
 
+type TracksControlT = { audio: boolean, video: boolean }
+
 type ClientsStateT = string[]
 
 type UsersInRoomStateT = {
@@ -25,11 +27,11 @@ type UsersInRoomStateT = {
 type SetRemoteMediaProps = {
    peerID: string,
    sessionDescription: RTCSessionDescriptionInit,
-   userData: { userName: string, tracksControl: { audio: boolean, video: boolean } }
+   userData: { userName: string, tracksControl: TracksControlT }
 }
 
 type MuteTrackHandleProps = {
-   id: string, tracksControl: { audio: boolean, video: boolean }
+   id: string, tracksControl: TracksControlT
 }
 
 type HandleRemovePeerProps = {
@@ -246,7 +248,7 @@ export default function useWebRTC({ roomID, socket }: WebRTCProps) {
    }, [])
 
 
-   const controlTracks = (muteType = TRACKS_TYPES.AUDIO, toogle = false) => {
+   const controlTracks = useCallback((muteType = TRACKS_TYPES.AUDIO, toogle = false) => {
       // Send users data that you are muted video or audio
       const tempTrackControls = { ...tracksControl, [muteType]: toogle }
       socket.emit(ACTIONS.MUTE_TRACK, { tracksControl: tempTrackControls, usersInRoom: Object.keys(usersInRoom) })
@@ -258,7 +260,7 @@ export default function useWebRTC({ roomID, socket }: WebRTCProps) {
                setTracksControl(prev => ({ ...prev, [muteType]: toogle }))
             }
          });
-   }
+   }, [tracksControl, usersInRoom])
 
    // Control tracks mute status
    useEffect(() => {

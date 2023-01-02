@@ -2,14 +2,14 @@ type ErrosT<T extends string | number | symbol> = {[key in T]?: string}
 type DefaultValidFuncT = (value: string | undefined) => string | null
 type ValidAndNamesT = DefaultValidFuncT[] | DefaultValidFuncT
 
-export const isEmptyObject = (obj: any) => {
+export const isEmptyObject = (obj: object) => {
     for (let _ in obj) {
         return false;
     }
     return true;
 }
 
-export const isEmptyObjectValues = (obj: any) => {
+export const isEmptyObjectValues = (obj: object) => {
     for (let key in obj) {
         if (obj[key]) return false
     }

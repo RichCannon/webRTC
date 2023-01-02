@@ -1,3 +1,4 @@
+import { DefaultAPIInstanceT, FetchInstanceParamsT, GetCheckRoomParamsT, GetCheckRoomReturnT, GetMyUserDataReturnT, PostCreateRoomBodyT, PostCreateRoomReturnT, PostEnterRoomPassBodyT, PostEnterRoomPassReturnT, PostLoginUserBodyT, PostLoginUserReturnT, PostRegisterUserBodyT, PostRegisterUserReturnT } from "./types"
 
 
 const BASE_URL = `http://localhost:3001/api`
@@ -21,8 +22,8 @@ const DEFAULT_HEADERS = {
    "content-type": "application/json"
 }
 
-const fetchInstance = async ({ url, method = METHODS.GET, body = null, headers = {} }) => {
-   const options = {
+async function fetchInstance<R>({ url, method = `GET`, body, headers = {} }: FetchInstanceParamsT) {
+   const options: RequestInit = {
       method,
       headers: { ...DEFAULT_HEADERS, ...headers },
    }
@@ -35,29 +36,29 @@ const fetchInstance = async ({ url, method = METHODS.GET, body = null, headers =
    if (!response.ok) {
       throw await response.json()
    }
-   return await response.json()
+   return await response.json() as Promise<R>
 }
 
 
 
 const api = {
-   postRegisterUser: async ({ body }) =>
-      await fetchInstance({ url: USER_URL + REGISTER_URL, method: METHODS.POST, body })
+   postRegisterUser: async ({ body }: DefaultAPIInstanceT<PostRegisterUserBodyT>) =>
+      await fetchInstance<PostRegisterUserReturnT>({ url: USER_URL + REGISTER_URL, method: `POST`, body })
    ,
-   postLoginUser: async ({ body }) =>
-      await fetchInstance({ url: USER_URL + LOGIN_URL, method: METHODS.POST, body })
+   postLoginUser: async ({ body }: DefaultAPIInstanceT<PostLoginUserBodyT>) =>
+      await fetchInstance<PostLoginUserReturnT>({ url: USER_URL + LOGIN_URL, method: `POST`, body })
    ,
-   postCreateRoom: async ({ body, headers = {} }) =>
-      await fetchInstance({ url: ROOM_URL + CREATE_URL, body, headers, method: METHODS.POST })
+   postCreateRoom: async ({ body, headers = {} }: DefaultAPIInstanceT<PostCreateRoomBodyT>) =>
+      await fetchInstance<PostCreateRoomReturnT>({ url: ROOM_URL + CREATE_URL, body, headers, method: `POST`})
    ,
-   getMyUserData: async ({ headers = {} }) =>
-      await fetchInstance({ url: USER_URL, headers })
+   getMyUserData: async ({ headers = {} }: DefaultAPIInstanceT) =>
+      await fetchInstance<GetMyUserDataReturnT>({ url: USER_URL, headers })
    ,
-   getCheckRoom: async ({ headers = {}, params }) =>
-      await fetchInstance({ url: `${ROOM_URL}${CHECK_ACCESS_URL}/${params.roomId}`, headers })
+   getCheckRoom: async ({ headers = {}, params }: DefaultAPIInstanceT<null, GetCheckRoomParamsT>) =>
+      await fetchInstance<GetCheckRoomReturnT>({ url: `${ROOM_URL}${CHECK_ACCESS_URL}/${params!.roomId}`, headers })
    ,
-   postEnterRoomPass: async ({ headers = {}, params, body = {} }) =>
-      await fetchInstance({ url: `${ROOM_URL}${CONNECT_URL}/${params.roomId}`, method: METHODS.POST, body, headers })
+   postEnterRoomPass: async ({ headers = {}, params, body }: DefaultAPIInstanceT<PostEnterRoomPassBodyT, GetCheckRoomParamsT>) =>
+      await fetchInstance<PostEnterRoomPassReturnT>({ url: `${ROOM_URL}${CONNECT_URL}/${params!.roomId}`, method: `POST`, body, headers })
    ,
 }
 
