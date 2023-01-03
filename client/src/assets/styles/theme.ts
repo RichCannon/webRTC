@@ -4,8 +4,6 @@ const md = `(max-width: 960px)`
 const sm = `(max-width: 600px)`
 const xs = `(max-width: 0px)`
 
-
-// Тема для более гибкой настройки цветов, шрифтов, брейкпоинтов, теней и т.п.
 export const theme = {
    colors: {
       primary: `#181818`,

@@ -1,7 +1,8 @@
-import { Provider, } from 'react-redux';
-import { combineReducers } from 'redux';
+import { Provider } from 'react-redux';
+import { applyMiddleware, combineReducers } from 'redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { ThemeProvider } from "styled-components"
+import createSagaMiddleware from '@redux-saga/core';
 
 // Reducers 
 import roomReducer from './logic/roomLogic/roomReducer'
@@ -22,9 +23,12 @@ const reducer = combineReducers({
    app: appReducer
 })
 
+const sagaMiddleware = createSagaMiddleware()
+
 
 const store = configureStore({
    reducer,
+   middleware: applyMiddleware(sagaMiddleware)
 })
 
 function App() {
