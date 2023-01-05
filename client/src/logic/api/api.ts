@@ -1,4 +1,20 @@
-import { DefaultAPIInstanceT, FetchInstanceParamsT, GetCheckRoomParamsT, GetCheckRoomReturnT, GetMyUserDataReturnT, PostCreateRoomBodyT, PostCreateRoomReturnT, PostEnterRoomPassBodyT, PostEnterRoomPassReturnT, PostLoginUserBodyT, PostLoginUserReturnT, PostRegisterUserBodyT, PostRegisterUserReturnT } from "./types"
+import { DefaultReqErrorT } from "../../types/common"
+import {
+   DefaultAPIInstanceT,
+   FetchInstanceParamsT,
+   GetCheckRoomParamsT,
+   GetCheckRoomReturnT,
+   GetMyUserDataReturnT,
+   PostCreateRoomBodyT,
+   PostCreateRoomReturnT,
+   PostEnterRoomPassBodyT,
+   PostEnterRoomPassParamsT,
+   PostEnterRoomPassReturnT,
+   PostLoginUserBodyT,
+   PostLoginUserReturnT,
+   PostRegisterUserBodyT,
+   PostRegisterUserReturnT
+} from "./types"
 
 
 const BASE_URL = `http://localhost:3001/api`
@@ -10,13 +26,6 @@ const LOGIN_URL = `/login`
 const CREATE_URL = `/create`
 const CHECK_ACCESS_URL = `/check-access` // :id
 const CONNECT_URL = `/connect` // :id
-
-const METHODS = {
-   GET: `GET`,
-   POST: `POST`,
-   PUT: `PUT`,
-   DELETE: `DELETE`
-}
 
 const DEFAULT_HEADERS = {
    "content-type": "application/json"
@@ -33,8 +42,10 @@ async function fetchInstance<R>({ url, method = `GET`, body, headers = {} }: Fet
    }
 
    const response = await fetch(url, options)
+
    if (!response.ok) {
-      throw await response.json()
+      const errorObj = await response.json()
+      throw { statusCode: response.status, ...errorObj } as DefaultReqErrorT
    }
    return await response.json() as Promise<R>
 }
@@ -49,7 +60,7 @@ const api = {
       await fetchInstance<PostLoginUserReturnT>({ url: USER_URL + LOGIN_URL, method: `POST`, body })
    ,
    postCreateRoom: async ({ body, headers = {} }: DefaultAPIInstanceT<PostCreateRoomBodyT>) =>
-      await fetchInstance<PostCreateRoomReturnT>({ url: ROOM_URL + CREATE_URL, body, headers, method: `POST`})
+      await fetchInstance<PostCreateRoomReturnT>({ url: ROOM_URL + CREATE_URL, body, headers, method: `POST` })
    ,
    getMyUserData: async ({ headers = {} }: DefaultAPIInstanceT) =>
       await fetchInstance<GetMyUserDataReturnT>({ url: USER_URL, headers })
@@ -57,8 +68,9 @@ const api = {
    getCheckRoom: async ({ headers = {}, params }: DefaultAPIInstanceT<null, GetCheckRoomParamsT>) =>
       await fetchInstance<GetCheckRoomReturnT>({ url: `${ROOM_URL}${CHECK_ACCESS_URL}/${params!.roomId}`, headers })
    ,
-   postEnterRoomPass: async ({ headers = {}, params, body }: DefaultAPIInstanceT<PostEnterRoomPassBodyT, GetCheckRoomParamsT>) =>
-      await fetchInstance<PostEnterRoomPassReturnT>({ url: `${ROOM_URL}${CONNECT_URL}/${params!.roomId}`, method: `POST`, body, headers })
+   postEnterRoomPass: async ({ headers = {}, params, body }: DefaultAPIInstanceT<PostEnterRoomPassBodyT, PostEnterRoomPassParamsT>) =>
+      await fetchInstance<PostEnterRoomPassReturnT>
+         ({ url: `${ROOM_URL}${CONNECT_URL}/${params!.roomId}`, method: `POST`, body, headers })
    ,
 }
 

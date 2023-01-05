@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import Modal from '../../components/Modal/Modal'
 import CreateRoomModal from '../../components/CreateRoomModal/CreateRoomModal'
 import ACTIONS from '../../common/socket/actions'
-import { createRoomRequest } from '../../logic/roomLogic/roomReducer'
 import { userActions } from '../../logic/userLogic/userReducer'
 import { SocketContext } from '../../hooks/useSocket'
 import * as Styled from './MainPagesStyles'
@@ -13,6 +12,7 @@ import { MyButton } from '../../components/MyButton/MyButton'
 import { createRoomSelector } from '../../logic/roomLogic/roomSelector'
 import RoomList from './components/RoomList/RoomList'
 import { USER_LOCAL_STORAGE_NAME } from '../../hooks/constants'
+import { roomActions } from '../../logic/roomLogic/roomReducer'
 
 const INIT_CREATE_ROOM_VALUES = {
    name: ``,
@@ -27,7 +27,7 @@ const MainPage = () => {
    const [createRoomValues, setCreateRoomValues] = useState(INIT_CREATE_ROOM_VALUES)
    const [isVisible, setIsVisible] = useState(false)
    const [rooms, updateRooms] = useState([])
-   const { fetching: createRoomFetching } = useSelector(createRoomSelector)
+   const { data: createRoomData, fetching: createRoomFetching } = useSelector(createRoomSelector)
    const dispatch = useDispatch()
    const history = useHistory()
    const rootNode = useRef<HTMLDivElement>(null)
@@ -60,6 +60,13 @@ const MainPage = () => {
       }
    }, [isVisible])
 
+   useEffect(() => {
+      if (createRoomData && !createRoomFetching) {
+         roomHandler({ roomId: createRoomData._id })
+         setIsVisible(false)
+      }
+   }, [createRoomData])
+
    // Creating new room
    const roomHandler = ({ roomId }: { roomId: string }) => {
       history.push(`/room/${roomId}`)
@@ -74,14 +81,15 @@ const MainPage = () => {
    }
 
    const onAcceptClick = (values: typeof INIT_CREATE_ROOM_VALUES) => {
-      dispatch(createRoomRequest(values)).unwrap()
-         .then(response => {
-            roomHandler({ roomId: response._id })
-            setIsVisible(false)
-         })
-         .catch(e => {
-            console.log(`Error:`, e)
-         })
+      dispatch(roomActions.createRoomRequest({ body: values }))
+      // .unwrap()
+      //    .then(response => {
+      //       roomHandler({ roomId: response._id })
+      //       setIsVisible(false)
+      //    })
+      //    .catch(e => {
+      //       console.log(`Error:`, e)
+      //    })
    }
 
    const onLogOutClick = () => {

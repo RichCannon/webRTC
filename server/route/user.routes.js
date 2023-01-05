@@ -28,7 +28,7 @@ router.post(`/login`, async (req, res) => {
          process.env.JWT_SECRET_KEY,
       )
 
-      return res.json({ token, userData: user })
+      return res.json({ token, userName: user.userName })
    } catch (e) {
       console.error(e)
       return res.status(500)
@@ -39,8 +39,17 @@ router.post(`/register`, async (req, res) => {
    try {
       const data = req.body
       const user = await User.create(data)
-      return res.json(user)
 
+      if (!process.env.JWT_SECRET_KEY) {
+         throw { message: `Jwt secret key not found` }
+      }
+
+      const token = jwt.sign(
+         { userId: user.id },
+         process.env.JWT_SECRET_KEY,
+      )
+
+      return res.json({ token, userName: user.userName })
    } catch (e) {
       console.error(e)
       return res.status(500)

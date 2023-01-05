@@ -12,6 +12,7 @@ type InputProps = {
 
 export const Wrapper = styled.div`
   position: relative;
+  input:-internal-autofill-selected {}
   input:focus ~ label, input:not(:placeholder-shown) ~ label {
     top: -.5em;
     left: 4px;

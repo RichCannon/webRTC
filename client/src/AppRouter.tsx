@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import LoginPage from "./pages/LoginPage/LoginPage";
 import RegisterPage from "./pages/RegisterPage/RegisterPage";
 import { userActions } from './logic/userLogic/userReducer'
-import { currentUser } from "./logic/userLogic/userSelector";
+import { currentUserSelector } from "./logic/userLogic/userSelector";
 import { PrivateRouter } from './pages/PrivateRouter/PrivateRouter';
 import { Preloader } from './components/Preloader/Preloader';
 import { Layout } from './components/Layout/Layout';
@@ -18,7 +18,7 @@ export const AppRouter = () => {
 
    const dispatch = useDispatch()
    const [isReady, setIsReady] = useState(false)
-   const { token, userId } = useSelector(currentUser)
+   const { token } = useSelector(currentUserSelector)
 
 
    useEffect(() => {
@@ -36,7 +36,7 @@ export const AppRouter = () => {
             <Layout>
                {isReady ?
                   <>
-                     {token && userId
+                     {token
                         ? <PrivateRouter />
                         : <Switch>
                            <Route exact path={'/login'} component={LoginPage} />

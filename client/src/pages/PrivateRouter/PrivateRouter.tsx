@@ -6,21 +6,21 @@ import useSocket, { SocketContext } from "../../hooks/useSocket"
 // Components
 import { Preloader } from "../../components/Preloader/Preloader"
 // Pages
-import  MainPage  from "../MainPage/MainPage"
+import MainPage from "../MainPage/MainPage"
 import { NotFoundPage } from "../NotFoundPage/NotFoundPage"
 import { RoomPage } from "../RoomPage/RoomPage"
 // Selectors
-import { currentUser, myUserDataSelector } from "../../logic/userLogic/userSelector"
+import { currentUserSelector, myUserDataSelector } from "../../logic/userLogic/userSelector"
 // Actions with request
-import { getMyUserDataRequest } from "../../logic/userLogic/userReducer"
+import { getMyUserDataRequest, userActions } from "../../logic/userLogic/userReducer"
 import { USER_LOCAL_STORAGE_NAME } from "../../hooks/constants"
 
 
 const PrivateRouter = () => {
 
-   const { token } = useSelector(currentUser)
+   const { token } = useSelector(currentUserSelector)
 
-   const socket = useSocket(token)
+   const socket = useSocket(token!)
    const dispatch = useDispatch()
    const history = useHistory()
 
@@ -28,16 +28,21 @@ const PrivateRouter = () => {
 
    useEffect(() => {
       if (!myUserData) {
-         dispatch(getMyUserDataRequest()).unwrap()
-            .then(response => {
-               console.log(response)
-            })
-            .catch(e => {
-               console.error(e) 
-               localStorage.removeItem(USER_LOCAL_STORAGE_NAME)
-               alert(e.message)
-               history.push(`/`)
-            })
+         const getMyUserDataErrorCallback = () => {
+            localStorage.removeItem(USER_LOCAL_STORAGE_NAME)
+            history.push(`/`)
+         }
+         dispatch(userActions.getMyUserDataRequest({ getMyUserDataErrorCallback }))
+         // .unwrap()
+         //    .then(response => {
+         //       console.log(response)
+         //    })
+         //    .catch(e => {
+         //       console.error(e) 
+         //       localStorage.removeItem(USER_LOCAL_STORAGE_NAME)
+         //       alert(e.message)
+         //       history.push(`/`)
+         //    })
       }
    }, [myUserData])
 

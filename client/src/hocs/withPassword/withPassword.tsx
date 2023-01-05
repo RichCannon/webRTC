@@ -2,7 +2,7 @@ import { ComponentType, useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useParams } from "react-router"
 
-import { checkRoomRequest, enterRoomPassRequest } from "../../logic/roomLogic/roomReducer"
+import { roomActions } from "../../logic/roomLogic/roomReducer"
 import { checkRoomSelector, enterRoomPassSelector } from "../../logic/roomLogic/roomSelector"
 
 import { Preloader } from '../../components/Preloader/Preloader'
@@ -31,15 +31,16 @@ const withPassword = (Component: ComponentType) => ({ ...props }) => {
    const dispatch = useDispatch()
 
    useEffect(() => {
-      dispatch(checkRoomRequest({ roomId }))
+      dispatch(roomActions.checkRoomRequest({ roomId }))
    }, [])
 
    const onSendRoomPasswordClick = () => {
-      dispatch(enterRoomPassRequest({ roomId, password: roomValues.password })).unwrap()
-         .then(() => { })
-         .catch(e => {
-            dispatch(appActions.showAlert({ message: e?.message || e.reason }))}
-         )
+      dispatch(roomActions.enterRoomPassRequest({ roomId, password: roomValues.password }))
+      // .unwrap()
+      //    .then(() => { })
+      //    .catch(e => {
+      //       dispatch(appActions.showAlert({ message: e?.message || e.reason }))}
+      //    )
    }
 
    return (
@@ -47,11 +48,10 @@ const withPassword = (Component: ComponentType) => ({ ...props }) => {
          {checkRoomFetching
             ? <Preloader />
             : <>
-               {checkRoomData.connected
+               {checkRoomData?.connected
                   ? <Component {...props} />
                   : <EnterPassScene
                      isLoading={enterRoomFetching}
-                     isDisabled={enterRoomFetching}
                      roomValues={roomValues}
                      onChange={onChange}
                      onSendRoomPasswordClick={onSendRoomPasswordClick} />

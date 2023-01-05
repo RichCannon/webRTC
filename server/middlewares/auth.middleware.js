@@ -45,7 +45,7 @@ const authSocketMiddleware = async (socket, next) => {
    const user = await User.findById(socket.userId, { "userName": 1, "_id": 1 })
 
    if (!user) {
-      return next(new Error({ message: `Such user doesn't exist!` }))
+      return next(new Error({ message: `Such user doesn't exist!`, type: `alert` }))
    }
    socket.userName = user.userName
    socket.userId = user._id.toString()

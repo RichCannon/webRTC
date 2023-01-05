@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router'
 
-import { loginUserRequest } from '../../logic/userLogic/userReducer'
+import { userActions } from '../../logic/userLogic/userReducer'
 import { MyButton } from '../../components/MyButton/MyButton'
 import * as Styled from './LoginPageStyles'
 import { MyInput } from '../../components/MyInput/MyInput'
@@ -26,7 +26,7 @@ const LoginPage = () => {
    const dispatch = useDispatch()
    const history = useHistory()
 
-   const { fetching: myUserDataFetching, error: myUserDataError } = useSelector(myUserDataSelector)
+   const { fetching: myUserDataFetching, error: myUserDataError, data: myUserData } = useSelector(myUserDataSelector)
 
    const onChangeHandler: OnChangeT = ({ currentTarget: { value, name } }) => {
       setLoginValues(values => ({ ...values, [name]: value }))
@@ -36,7 +36,7 @@ const LoginPage = () => {
       if (myUserDataError) {
          setLoginErrors(errors => ({ ...errors, [myUserDataError.param]: myUserDataError.message }))
          if (myUserDataError.param === `alert`) {
-            appActions.showAlert(myUserDataError.message)
+            appActions.showAlert({ message: myUserDataError.message })
          }
       }
    }, [myUserDataError])
@@ -55,13 +55,18 @@ const LoginPage = () => {
          return
       }
 
-      dispatch(loginUserRequest(loginValues)).unwrap()
-         .then(response => {
-            history.replace('/')
-         })
-         .catch(e => {
-            console.error(e)
-         })
+      const pushToMainPage = () => {
+         history.replace(`/`)
+      }
+
+      dispatch(userActions.loginRequest({ ...loginValues, pushToMainPage }))
+      // .unwrap()
+      //    .then(response => {
+      //       history.replace('/')
+      //    })
+      //    .catch(e => {
+      //       console.error(e)
+      //    })
 
    }
 
@@ -95,7 +100,7 @@ const LoginPage = () => {
                   loading={myUserDataFetching}
                   disabled={myUserDataFetching}
                   label={`Login`}
-                   />
+               />
             </Styled.Form>
             <Styled.LinkToRegister>
                <Link to={`/register`}>{`Don't have an account? Click to register!`}</Link>

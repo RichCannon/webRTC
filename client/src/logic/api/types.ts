@@ -16,7 +16,7 @@ export type FetchInstanceParamsT = {
 
 
 export type PostRegisterUserBodyT = {
-    userName: string,
+    login: string,
     password: string,
 }
 
@@ -25,11 +25,12 @@ export type PostRegisterUserReturnT = {
 }
 
 export type PostLoginUserReturnT = {
-
+    token: string
+    userName: string
 }
 
 export type PostCreateRoomReturnT = {
-
+    _id: string
 }
 
 export type GetMyUserDataReturnT = {
@@ -41,11 +42,11 @@ export type GetCheckRoomReturnT = {
 }
 
 export type PostEnterRoomPassReturnT = {
-
+    connected: boolean
 }
 
 export type PostLoginUserBodyT = {
-    userName: string,
+    login: string,
     password: string,
 }
 
@@ -61,3 +62,5 @@ export type PostEnterRoomPassBodyT = {
 export type GetCheckRoomParamsT = {
     roomId: string
 }
+
+export type PostEnterRoomPassParamsT = GetCheckRoomParamsT

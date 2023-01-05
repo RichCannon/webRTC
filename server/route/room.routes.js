@@ -2,7 +2,6 @@ import { Router } from 'express'
 import { authMiddleware } from '../middlewares/auth.middleware.js'
 
 import { Room } from './models/Room.js'
-// import { User } from './models/User.js'
 
 const router = Router()
 
@@ -19,7 +18,7 @@ router.post(`/create`, authMiddleware, async (req, res) => {
 
    } catch (e) {
       console.error(e)
-      return res.status(500)
+      return res.status(500).json({ message: `Unable to create a room`, param: `alert` })
    }
 })
 
@@ -61,10 +60,7 @@ router.post(`/connect/:id`, authMiddleware, async (req, res) => {
       const room = await Room.findById(roomId, { "password": 1 })
 
       if (!room) {
-         throw {
-            connected: false,
-            reason: `Room doesn't exist`
-         }
+         throw { message: `Room doesn't exist`, param: `alert` }
       }
 
       if (room && room.password === roomPass) {
@@ -75,10 +71,7 @@ router.post(`/connect/:id`, authMiddleware, async (req, res) => {
          })
       }
 
-      throw {
-         connected: false,
-         reason: `Wrong password`
-      }
+      throw { message: `Wrong password`, param: `alert` }
 
    } catch (e) {
       console.error(e)
