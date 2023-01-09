@@ -7,24 +7,23 @@ import { checkRoomSelector, enterRoomPassSelector } from "../../logic/roomLogic/
 
 import { Preloader } from '../../components/Preloader/Preloader'
 import { EnterPassScene } from "../../components/EnterPassScene/EnterPassScene"
-import { appActions } from "../../logic/appLogic/appReducer"
 import { OnChangeT } from "../../types/common"
 
 
 const withPassword = (Component: ComponentType) => ({ ...props }) => {
 
-   const { data: checkRoomData, fetching: checkRoomFetching, error: checkRoomError } = useSelector(checkRoomSelector)
-   const { /* data: enterRoomData, */ fetching: enterRoomFetching, error: enterRoomError } = useSelector(enterRoomPassSelector)
+   const { data: checkRoomData, fetching: checkRoomFetching, /* error: checkRoomError */ } = useSelector(checkRoomSelector)
+   const { /* data: enterRoomData, */ fetching: enterRoomFetching, /* error: enterRoomError */ } = useSelector(enterRoomPassSelector)
 
-   if (checkRoomError || enterRoomError) {
-      console.error(checkRoomError)
-      console.error(enterRoomError)
-   }
+   // if (checkRoomError || enterRoomError) {
+   //    console.error(checkRoomError)
+   //    console.error(enterRoomError)
+   // }
 
-   const { id: roomId } = useParams<{id: string}>()
+   const { id: roomId } = useParams<{ id: string }>()
    const [roomValues, setRoomValues] = useState({ password: `` })
 
-   const onChange:OnChangeT = ({ target: { value, name } }) => {
+   const onChange: OnChangeT = ({ currentTarget: { value, name } }) => {
       setRoomValues((values) => ({ ...values, [name]: value }))
    }
 
@@ -36,11 +35,6 @@ const withPassword = (Component: ComponentType) => ({ ...props }) => {
 
    const onSendRoomPasswordClick = () => {
       dispatch(roomActions.enterRoomPassRequest({ roomId, password: roomValues.password }))
-      // .unwrap()
-      //    .then(() => { })
-      //    .catch(e => {
-      //       dispatch(appActions.showAlert({ message: e?.message || e.reason }))}
-      //    )
    }
 
    return (

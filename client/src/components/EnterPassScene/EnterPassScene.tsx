@@ -1,4 +1,5 @@
 import { FC } from 'react'
+
 import { OnChangeT, OnSubmitT } from '../../types/common'
 import { MyButton } from '../MyButton/MyButton'
 import { MyInput } from '../MyInput/MyInput'

@@ -3,6 +3,7 @@ import { call, put, select, takeLeading } from "redux-saga/effects";
 
 import { api } from "../api/api";
 import { PostLoginUserReturnT } from "../api/types";
+import { appActions } from "../appLogic/appReducer";
 import { userActions } from "./userReducer";
 import { currentUserSelector } from "./userSelector";
 
@@ -28,6 +29,7 @@ function* postRegisterRequest(action: Action) {
       const response: PostLoginUserReturnT = yield call(api.postRegisterUser, { body: restPayload })
 
       yield put(userActions.registerSuccess(response))
+      yield put(appActions.showAlert({ message: `Your account has been created!`}))
       yield call(pushToMainPage)
 
     } catch (e: any) {
@@ -41,7 +43,8 @@ function* getMyUserDataRequest(action: Action) {
     try {
 
       const { token }: { token: string } = yield select(currentUserSelector);
-      const response: PostLoginUserReturnT = yield call(api.getMyUserData, { headers: { authorization: `Bearer ${token}` } })
+      const payload = { headers: { authorization: `Bearer ${token}` } }
+      const response: PostLoginUserReturnT = yield call(api.getMyUserData, payload)
 
       yield put(userActions.getMyUserDataSuccess(response))
 

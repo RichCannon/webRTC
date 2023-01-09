@@ -30,7 +30,8 @@ export type PostLoginUserReturnT = {
 }
 
 export type PostCreateRoomReturnT = {
-    _id: string
+    id: string
+    name: string
 }
 
 export type GetMyUserDataReturnT = {

@@ -1,13 +1,12 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-
 import { Link, useHistory } from 'react-router-dom'
+
 import { MyButton } from '../../components/MyButton/MyButton'
 import { MyInput } from '../../components/MyInput/MyInput'
 import { appActions } from '../../logic/appLogic/appReducer'
-import { ALERT_TYPE } from '../../logic/appLogic/constants'
 
-import { registerUserRequest, userActions } from '../../logic/userLogic/userReducer'
+import { userActions } from '../../logic/userLogic/userReducer'
 import { myUserDataSelector } from '../../logic/userLogic/userSelector'
 import { OnChangeT, OnSubmitT } from '../../types/common'
 import { validFormCheck } from '../../utils/utils'
@@ -22,7 +21,7 @@ const RegisterPage = () => {
 
    const dispatch = useDispatch()
 
-   const { fetching: myUserDataFetching, /* error: myUserDataError */ } = useSelector(myUserDataSelector)
+   const { fetching: myUserDataFetching, error: myUserDataError } = useSelector(myUserDataSelector)
 
    const onChangeHandler: OnChangeT = (e) => {
       const name = e.currentTarget.name
@@ -30,13 +29,23 @@ const RegisterPage = () => {
       setRegisterValues(values => ({ ...values, [name]: value }))
    }
 
+   useEffect(() => {
+      if (myUserDataError) {
+         if (myUserDataError.param === `alert`) {
+            appActions.showAlert({ message: myUserDataError.message })
+            return
+         }
+         setRegisterValuesError(errors => ({ ...errors, [myUserDataError.param]: myUserDataError.message }))
+      }
+   }, [myUserDataError])
+
    const onRegisterClick: OnSubmitT = (e) => {
       e.preventDefault()
 
       const validSchema = {
          login: [validators.required, validators.maxLength(10)],
          password: [validators.required, validators.maxLength(20)],
-         repeatPassword: validators.sameValues(registerValues.password, `Different passwords!`)
+         repeatPassword: validators.sameValues(registerValues.password, `Values are not the same!`)
       }
 
       const errors = validFormCheck(registerValues, validSchema)
@@ -46,22 +55,11 @@ const RegisterPage = () => {
          return
       }
 
-
       const pushToMainPage = () => {
          history.replace(`/`)
       }
 
       dispatch(userActions.registerRequest({ ...registerValues, pushToMainPage }))
-      // .unwrap()
-      //    .then(response => {
-      //       console.log(response)
-      //       dispatch(appActions.showAlert({ message: `Your account has been created. Go to a login page to proceed`, type: `ok` }))
-      //       setRegisterValues(INIT_INPUT_REGISTER_VALUES)
-      //    })
-      //    .catch(e => {
-      //       console.error(e)
-      //       alert(e)
-      //    })
    }
 
    return (

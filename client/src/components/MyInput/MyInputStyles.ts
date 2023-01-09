@@ -10,9 +10,19 @@ type InputProps = {
   styleType: InputStyles
 }
 
+export const Input = styled.input<InputProps>`
+  
+  font-size: 1rem;
+  padding: .7em;
+  background-color: transparent;
+  color: ${({ theme }) => theme.colors.secondary};
+  border: ${({ theme, styleType }) => `2px solid ${theme.colors[styleType]}`};
+  font-weight: 600;
+  width: 100%;
+`
+
 export const Wrapper = styled.div`
   position: relative;
-  input:-internal-autofill-selected {}
   input:focus ~ label, input:not(:placeholder-shown) ~ label {
     top: -.5em;
     left: 4px;
@@ -24,15 +34,7 @@ export const Wrapper = styled.div`
   
 `
 
-export const Input = styled.input<InputProps>`
-  font-size: 1rem;
-  padding: .7em;
-  background-color: transparent;
-  color: ${({ theme }) => theme.colors.secondary};
-  border: ${({ theme, styleType }) => `2px solid ${theme.colors[styleType]}`};
-  font-weight: 600;
-  width: 100%;
-`
+
 
 export const Label = styled.label`
   font-size: 1rem;

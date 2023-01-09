@@ -12,7 +12,7 @@ import { RoomPage } from "../RoomPage/RoomPage"
 // Selectors
 import { currentUserSelector, myUserDataSelector } from "../../logic/userLogic/userSelector"
 // Actions with request
-import { getMyUserDataRequest, userActions } from "../../logic/userLogic/userReducer"
+import { userActions } from "../../logic/userLogic/userReducer"
 import { USER_LOCAL_STORAGE_NAME } from "../../hooks/constants"
 
 

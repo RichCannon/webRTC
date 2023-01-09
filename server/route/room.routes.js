@@ -14,7 +14,7 @@ router.post(`/create`, authMiddleware, async (req, res) => {
       user.connectedRoom = room._id
       await user.save()
 
-      return res.json(room)
+      return res.json({name: room.name, id: room._id})
 
    } catch (e) {
       console.error(e)

@@ -10,9 +10,16 @@ import { roomActions } from "./roomReducer";
 function* postCreateRoomRequest(action: Action) {
   if (roomActions.createRoomRequest.match(action)) {
     try {
-      const response: PostCreateRoomReturnT = yield call(api.postCreateRoom, { body: action.payload })
+      const { token }: { token: string } = yield select(currentUserSelector);
+      const { onSuccessCreatRoomCallback, ...restPayload } = action.payload
+      const payload = {
+        body: restPayload,
+        headers: { authorization: `Bearer ${token}` },
+      }
+      const response: PostCreateRoomReturnT = yield call(api.postCreateRoom, payload)
 
       yield put(roomActions.createRoomSuccess(response))
+      yield call(onSuccessCreatRoomCallback, response.id)
 
     } catch (e: any) {
       yield put(roomActions.createRoomFailure(e))
@@ -23,7 +30,13 @@ function* postCreateRoomRequest(action: Action) {
 function* getCheckRoomRequest(action: Action) {
   if (roomActions.checkRoomRequest.match(action)) {
     try {
-      const response: GetCheckRoomReturnT = yield call(api.getCheckRoom, { params: action.payload })
+      const { token }: { token: string } = yield select(currentUserSelector);
+
+      const payload = {
+        params: action.payload,
+        headers: { authorization: `Bearer ${token}` },
+      }
+      const response: GetCheckRoomReturnT = yield call(api.getCheckRoom, payload)
 
       yield put(roomActions.checkRoomSuccess(response))
 
@@ -47,6 +60,7 @@ function* postEnterRoomPassRequest(action: Action) {
         headers: { authorization: `Bearer ${token}` },
       }
       const response: GetCheckRoomReturnT = yield call(api.postEnterRoomPass, payload)
+      console.log("🚀 ~ file: roomSaga.ts:63 ~ function*postEnterRoomPassRequest ~ response", response)
 
       yield put(roomActions.enterRoomPassSuccess(response))
 

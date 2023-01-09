@@ -26,7 +26,7 @@ const LoginPage = () => {
    const dispatch = useDispatch()
    const history = useHistory()
 
-   const { fetching: myUserDataFetching, error: myUserDataError, data: myUserData } = useSelector(myUserDataSelector)
+   const { fetching: myUserDataFetching, error: myUserDataError} = useSelector(myUserDataSelector)
 
    const onChangeHandler: OnChangeT = ({ currentTarget: { value, name } }) => {
       setLoginValues(values => ({ ...values, [name]: value }))
@@ -34,10 +34,11 @@ const LoginPage = () => {
 
    useEffect(() => {
       if (myUserDataError) {
-         setLoginErrors(errors => ({ ...errors, [myUserDataError.param]: myUserDataError.message }))
          if (myUserDataError.param === `alert`) {
             appActions.showAlert({ message: myUserDataError.message })
+            return
          }
+         setLoginErrors(errors => ({ ...errors, [myUserDataError.param]: myUserDataError.message }))
       }
    }, [myUserDataError])
 
@@ -60,13 +61,6 @@ const LoginPage = () => {
       }
 
       dispatch(userActions.loginRequest({ ...loginValues, pushToMainPage }))
-      // .unwrap()
-      //    .then(response => {
-      //       history.replace('/')
-      //    })
-      //    .catch(e => {
-      //       console.error(e)
-      //    })
 
    }
 

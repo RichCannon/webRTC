@@ -11,12 +11,12 @@ router.post(`/login`, async (req, res) => {
       const { login = null, password = null } = req.body
       const user = await User.findOne({ userName: login })
 
-      if (password !== user?.password) {
-         return res.status(400).json({ message: `Password isn't correct`, param: `password` })
+      if (!user) {
+         return res.status(400).json({ message: `Such user doesn't exist`, param: `login` })
       }
 
-      if (!user) {
-         return res.status(400).json({ message: `User not found`, param: `alert` })
+      if (password !== user?.password) {
+         return res.status(400).json({ message: `Password isn't correct`, param: `password` })
       }
 
       if (!process.env.JWT_SECRET_KEY) {

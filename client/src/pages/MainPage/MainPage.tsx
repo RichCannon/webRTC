@@ -36,14 +36,6 @@ const MainPage = () => {
       setCreateRoomValues((values) => ({ ...values, [name]: value }))
    }
 
-   // useEffect(() => {
-   //    if (createRoomData._id) {
-   //       roomHandler({ roomId: createRoomData._id })
-   //       setIsVisible(false)
-   //    }
-
-   // }, [createRoomData])
-
    useEffect(() => {
       // Get all available rooms
       if (!socket) return
@@ -60,12 +52,6 @@ const MainPage = () => {
       }
    }, [isVisible])
 
-   useEffect(() => {
-      if (createRoomData && !createRoomFetching) {
-         roomHandler({ roomId: createRoomData._id })
-         setIsVisible(false)
-      }
-   }, [createRoomData])
 
    // Creating new room
    const roomHandler = ({ roomId }: { roomId: string }) => {
@@ -81,15 +67,11 @@ const MainPage = () => {
    }
 
    const onAcceptClick = (values: typeof INIT_CREATE_ROOM_VALUES) => {
-      dispatch(roomActions.createRoomRequest({ body: values }))
-      // .unwrap()
-      //    .then(response => {
-      //       roomHandler({ roomId: response._id })
-      //       setIsVisible(false)
-      //    })
-      //    .catch(e => {
-      //       console.log(`Error:`, e)
-      //    })
+      const onSuccessCreatRoomCallback = (roomId: string) => {
+         roomHandler({ roomId })
+         setIsVisible(false)
+      }
+      dispatch(roomActions.createRoomRequest({...values, onSuccessCreatRoomCallback}))
    }
 
    const onLogOutClick = () => {
