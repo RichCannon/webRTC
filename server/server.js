@@ -66,10 +66,9 @@ const shareRoomsInfo = async () => {
    for (let i = 0; i < rooms.length; i++) {
       const r = rooms[i]
       const numOfJoined = Array.from(io.sockets.adapter.rooms.get(r._id.toString()) || []).length
-      if (!numOfJoined) { // Remove room if nobody in here
-         return r.remove()
-         
-      }
+      // if (!numOfJoined) { // Remove room if nobody in here
+      //    return r.remove()
+      // }
       roomWithNumOfJoined.push({ name: r.name, id: r._id.toString(), numOfJoined })
    }
 
@@ -155,6 +154,11 @@ io.on('connection', async (socket) => {
 
          // If only one person left and he leave, then delete room
          if (clients[0] === socket.id && clients.length === 1) {
+            // console.log(`deleteing room process`)
+            // setTimeout(() => {
+            //    const clients = Array.from(io.sockets.adapter.rooms.get(roomID) || [])
+            //    console.log(`length`,clients.length)
+            // }, 2000)
             console.log(`Room deleted:`, roomID)
             await Room.findOneAndDelete({ "_id": roomID })
          }
