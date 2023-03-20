@@ -30,29 +30,30 @@ const withPassword = (Component: ComponentType) => ({ ...props }) => {
    const dispatch = useDispatch()
 
    useEffect(() => {
-      dispatch(roomActions.checkRoomRequest({ roomId }))
+      dispatch(roomActions.checkRoomRequest({ roomId }));
+      return () => {
+         dispatch(roomActions.checkRoomReset())
+      }
    }, [])
 
    const onSendRoomPasswordClick = () => {
       dispatch(roomActions.enterRoomPassRequest({ roomId, password: roomValues.password }))
    }
 
-   return (
-      <>
-         {checkRoomFetching
-            ? <Preloader />
-            : <>
-               {checkRoomData?.connected
-                  ? <Component {...props} />
-                  : <EnterPassScene
-                     isLoading={enterRoomFetching}
-                     roomValues={roomValues}
-                     onChange={onChange}
-                     onSendRoomPasswordClick={onSendRoomPasswordClick} />
-               }
-            </>
-         }
-      </>
+   if (checkRoomFetching) {
+      return <Preloader />
+   }
+
+   return (<>
+      {checkRoomData?.connected
+         ? <Component {...props} />
+         : <EnterPassScene
+            isLoading={enterRoomFetching}
+            roomValues={roomValues}
+            onChange={onChange}
+            onSendRoomPasswordClick={onSendRoomPasswordClick} />
+      }
+   </>
    )
 }
 

@@ -1,14 +1,14 @@
 import { useEffect, useRef, useCallback, useState } from "react"
 import freeice from 'freeice'
+import { Socket } from "socket.io-client"
+
 
 import ACTIONS from "../common/socket/actions"
 import useStateWithCallback from './useStateWithCallback'
 import { DEFAULT_TRACKS_CONTROL_STATE, LOCAL_VIDEO, TRACKS_TYPES } from "./constants"
-import { Socket } from "socket.io-client"
-
 type WebRTCProps = {
    roomID: string,
-   socket: Socket,
+   socket: Socket | null,
 }
 
 type TracksControlT = { audio: boolean, video: boolean }
@@ -106,7 +106,7 @@ export default function useWebRTC({ roomID, socket }: WebRTCProps) {
          // When new candidate trying to connect (creating offer or answer)
          peerConnections.current[peerID].onicecandidate = e => {
             if (e.candidate) {
-               socket.emit(ACTIONS.RELAY_ICE, {
+               socket!.emit(ACTIONS.RELAY_ICE, {
                   peerID,
                   iceCandidate: e.candidate
                })
@@ -126,22 +126,21 @@ export default function useWebRTC({ roomID, socket }: WebRTCProps) {
             await peerConnections.current[peerID].setLocalDescription(offer)
 
             // Here we send this content
-            socket.emit(ACTIONS.RELAY_SDP, {
+            socket!.emit(ACTIONS.RELAY_SDP, {
                peerID,
                sessionDescription: offer
             })
          }
       }
 
-      socket.on(ACTIONS.ADD_PEER, handleNewPeer)
+      socket!.on(ACTIONS.ADD_PEER, handleNewPeer)
 
       return () => {
-         socket.off(ACTIONS.ADD_PEER);
+         socket!.off(ACTIONS.ADD_PEER);
       }
    }, [])
 
    useEffect(() => {
-
       const setRemoteMedia = async ({ peerID, sessionDescription: remoteDescription, userData }: SetRemoteMediaProps) => {
          // $peerID - id of who connecting (if (remoteDescription.type === `offer`))
          // $remoteDescription - data with stream
@@ -157,16 +156,16 @@ export default function useWebRTC({ roomID, socket }: WebRTCProps) {
             const answer = await peerConnections.current[peerID].createAnswer()
             await peerConnections.current[peerID].setLocalDescription(answer)
 
-            socket.emit(ACTIONS.RELAY_SDP, {
+            socket!.emit(ACTIONS.RELAY_SDP, {
                peerID,
                sessionDescription: answer
             })
          }
       }
-      socket.on(ACTIONS.SESSION_DESCRIPTION, setRemoteMedia)
+      socket!.on(ACTIONS.SESSION_DESCRIPTION, setRemoteMedia)
 
       return () => {
-         socket.off(ACTIONS.SESSION_DESCRIPTION);
+         socket!.off(ACTIONS.SESSION_DESCRIPTION);
       }
    }, [])
 
@@ -177,10 +176,10 @@ export default function useWebRTC({ roomID, socket }: WebRTCProps) {
          peerConnections.current[peerID].addIceCandidate(new RTCIceCandidate(iceCandidate))
       }
 
-      socket.on(ACTIONS.ICE_CANDIDATE, addNewIceCandidate)
+      socket!.on(ACTIONS.ICE_CANDIDATE, addNewIceCandidate)
 
       return () => {
-         socket.off(ACTIONS.ICE_CANDIDATE);
+         socket!.off(ACTIONS.ICE_CANDIDATE);
       }
    }, [])
 
@@ -195,17 +194,16 @@ export default function useWebRTC({ roomID, socket }: WebRTCProps) {
 
          updateClients(list => list.filter(c => c !== peerID))
       }
-      socket.on(ACTIONS.REMOVE_PEER, handleRemovePeer)
+      socket!.on(ACTIONS.REMOVE_PEER, handleRemovePeer)
 
       return () => {
-         socket.off(ACTIONS.REMOVE_PEER);
+         socket!.off(ACTIONS.REMOVE_PEER);
       }
 
    }, [])
 
    // Creating our media stream of video from webCam
    useEffect(() => {
-      console.log(`JOINING ROOM`)
       const startCapture = async () => {
          // Getting our media content
          localMediaStream.current = await navigator.mediaDevices.getUserMedia({
@@ -215,7 +213,6 @@ export default function useWebRTC({ roomID, socket }: WebRTCProps) {
                height: 720
             }
          })
-
          addNewClient(LOCAL_VIDEO, () => {
             const localVideoElement = peerMediaElements.current[LOCAL_VIDEO]
 
@@ -228,16 +225,17 @@ export default function useWebRTC({ roomID, socket }: WebRTCProps) {
 
 
       startCapture()
-         .then(() => socket.emit(ACTIONS.JOIN, { room: roomID }))
+         .then(() => {
+            socket!.emit(ACTIONS.JOIN, { room: roomID })
+         })
          .catch(e => console.error('Error getting userMedia:', e))
 
       return () => {
          // Stop recording video when leave from room
          if (localMediaStream.current) {
-            console.log(`Stop recodring!`, localMediaStream.current)
             localMediaStream.current.getTracks().forEach(track => track.stop());
             // Leave from room
-            socket.emit(ACTIONS.LEAVE)
+            socket!.emit(ACTIONS.LEAVE)
          }
       }
 
@@ -251,7 +249,7 @@ export default function useWebRTC({ roomID, socket }: WebRTCProps) {
    const controlTracks = useCallback((muteType = TRACKS_TYPES.AUDIO, toogle = false) => {
       // Send users data that you are muted video or audio
       const tempTrackControls = { ...tracksControl, [muteType]: toogle }
-      socket.emit(ACTIONS.MUTE_TRACK, { tracksControl: tempTrackControls, usersInRoom: Object.keys(usersInRoom) })
+      socket!.emit(ACTIONS.MUTE_TRACK, { tracksControl: tempTrackControls, usersInRoom: Object.keys(usersInRoom) })
 
       localMediaStream.current &&
          localMediaStream.current.getTracks().forEach(track => {
@@ -267,10 +265,10 @@ export default function useWebRTC({ roomID, socket }: WebRTCProps) {
       const muteTrackHandle = ({ id, tracksControl }: MuteTrackHandleProps) => {
          setUsersInRoom(prev => ({ ...prev, [id]: { ...prev[id], ...tracksControl } }))
       }
-      socket.on(ACTIONS.MUTE_TRACK, muteTrackHandle)
+      socket!.on(ACTIONS.MUTE_TRACK, muteTrackHandle)
 
       return () => {
-         socket.off(ACTIONS.MUTE_TRACK);
+         socket!.off(ACTIONS.MUTE_TRACK);
       }
 
    }, [])

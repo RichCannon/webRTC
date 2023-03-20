@@ -29,17 +29,19 @@ type InitState = {
    enterRoomPass: DefaultReqDataT<{}>
 }
 
+const checkRoomInitState = {
+   data: null,
+   fetching: true,
+   error: null
+}
+
 const initialState: InitState = {
    createRoom: {
       data: null,
       fetching: false,
       error: null
    },
-   checkRoom: {
-      data: null,
-      fetching: true,
-      error: null
-   },
+   checkRoom: checkRoomInitState,
    enterRoomPass: {
       data: {},
       fetching: false,
@@ -76,6 +78,9 @@ const roomReducer = createSlice({
       checkRoomFailure(state, action: PayloadAction<GetCheckRoomErrorT>) {
          state.checkRoom.fetching = false
          state.checkRoom.error = action.payload
+      },
+      checkRoomReset(state) {
+         state.checkRoom = checkRoomInitState;
       },
       // Enter room password request
       enterRoomPassRequest(state, action: PayloadAction<PostEnterPassRoomPayloadT>) {
