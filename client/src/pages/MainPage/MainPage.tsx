@@ -14,11 +14,16 @@ import RoomList from './components/RoomList/RoomList'
 import { USER_LOCAL_STORAGE_NAME } from '../../hooks/constants'
 import { roomActions } from '../../logic/roomLogic/roomReducer'
 
+export type RoomT = {
+   id: string
+   name: string
+   numOfJoined: number
+}
+
 const INIT_CREATE_ROOM_VALUES = {
    name: ``,
    password: ``
 }
-
 
 const MainPage = () => {
 
@@ -26,7 +31,7 @@ const MainPage = () => {
 
    const [createRoomValues, setCreateRoomValues] = useState(INIT_CREATE_ROOM_VALUES)
    const [isVisible, setIsVisible] = useState(false)
-   const [rooms, updateRooms] = useState([])
+   const [rooms, setRooms] = useState<RoomT[]>([])
    const { data: createRoomData, fetching: createRoomFetching } = useSelector(createRoomSelector)
    const dispatch = useDispatch()
    const history = useHistory()
@@ -39,11 +44,15 @@ const MainPage = () => {
    useEffect(() => {
       // Get all available rooms
       if (!socket) return
-      socket.on(ACTIONS.SHARE_ROOMS, ({ rooms = [] } = {}) => {
+      const handleShareRooms = ({ rooms = [] }: { rooms: RoomT[] }) => {
          if (rootNode.current) {
-            updateRooms(rooms)
+            setRooms(rooms)
          }
-      })
+      }
+      socket.on(ACTIONS.SHARE_ROOMS, handleShareRooms)
+      return () => {
+         socket.off(ACTIONS.SHARE_ROOMS)
+      }
    }, [socket])
 
    useEffect(() => {
@@ -71,7 +80,7 @@ const MainPage = () => {
          roomHandler({ roomId })
          setIsVisible(false)
       }
-      dispatch(roomActions.createRoomRequest({...values, onSuccessCreatRoomCallback}))
+      dispatch(roomActions.createRoomRequest({ ...values, onSuccessCreatRoomCallback }))
    }
 
    const onLogOutClick = () => {

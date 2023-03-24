@@ -1,10 +1,16 @@
-import { memo } from 'react'
+import { FC, memo } from 'react'
 import { MyButton } from '../../../../components/MyButton/MyButton'
+import { RoomT } from '../../MainPage'
 import * as Styled from './RoomListStyles'
 
-const RoomList = ({ rooms = [], roomHandler }) => {
 
-  //console.log(`rooms`,rooms)
+
+type RoomListP = {
+  rooms: RoomT[]
+  roomHandler: ({ roomId }: { roomId: string }) => void
+}
+
+const RoomList:FC<RoomListP> = ({ rooms = [], roomHandler }) => {
 
   return (
     <Styled.Container>

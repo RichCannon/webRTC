@@ -14,7 +14,7 @@ router.post(`/create`, authMiddleware, async (req, res) => {
       user.connectedRoom = room._id
       await user.save()
 
-      return res.json({name: room.name, id: room._id})
+      return res.json({ name: room.name, id: room._id })
 
    } catch (e) {
       console.error(e)
@@ -63,7 +63,7 @@ router.post(`/connect/:id`, authMiddleware, async (req, res) => {
          throw { message: `Room doesn't exist`, param: `alert` }
       }
 
-      if (room && room.password === roomPass) {
+      if (room && room.password === roomPass || (roomPass.length === 0 && room.password.length === 0)) {
          user.connectedRoom = room._id
          await user.save()
          return res.json({

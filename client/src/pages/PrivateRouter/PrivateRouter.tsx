@@ -1,5 +1,5 @@
 import { Route, Switch, useHistory } from "react-router"
-import { useEffect } from "react"
+import { memo, useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 
 import useSocket, { SocketContext } from "../../hooks/useSocket"
@@ -60,4 +60,4 @@ const PrivateRouter = () => {
    )
 }
 
-export { PrivateRouter }
+export default  memo(PrivateRouter)

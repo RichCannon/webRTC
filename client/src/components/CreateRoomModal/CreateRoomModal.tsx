@@ -30,14 +30,14 @@ const CreateRoomModal: FC<CreateRoomModalT> = ({ values, onChangeHandler, onAcce
                disabled={fetching}
                placeholder={"Name"}
                name={"name"}
-               value={values["name"]}
+               value={values.name}
                onChange={onChange} />
             <MyInput
                disabled={fetching}
                placeholder={"Password"}
                name={"password"}
                type={"password"}
-               value={values["password"]}
+               value={values.password}
                onChange={onChange} />
             <MyButton
                disabled={fetching}
