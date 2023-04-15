@@ -4,12 +4,12 @@ import { useParams } from "react-router"
 
 import * as Styled from "./RoomPageStyles"
 
-import { Preloader } from "../../components/Preloader/Preloader"
-import withPassword from "../../hocs/withPassword/withPassword"
-import { SocketContext } from "../../hooks/useSocket"
-import useWebRTC from "../../hooks/useWebRTC"
-import { LOCAL_VIDEO, TRACKS_TYPES } from "../../hooks/constants"
-import { myUserDataSelector } from "../../logic/userLogic/userSelector"
+import { Preloader } from "@/components/Preloader/Preloader"
+import withPassword from "@/hocs/withPassword/withPassword"
+import { SocketContext } from "@/hooks/useSocket"
+import useWebRTC from "@/hooks/useWebRTC"
+import { LOCAL_VIDEO, TRACKS_TYPES } from "@/hooks/constants"
+import { myUserDataSelector } from "@/logic/userLogic/userSelector"
 
 
 const RoomPage = () => {

@@ -1,4 +1,3 @@
-import { ALERT_TYPE } from "./constants"
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 type AlertTypeT = `error` | `ok`

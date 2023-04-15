@@ -6,6 +6,7 @@ import { Socket } from "socket.io-client"
 import ACTIONS from "../common/socket/actions"
 import useStateWithCallback from './useStateWithCallback'
 import { DEFAULT_TRACKS_CONTROL_STATE, LOCAL_VIDEO, TRACKS_TYPES } from "./constants"
+
 type WebRTCProps = {
    roomID: string,
    socket: Socket | null,

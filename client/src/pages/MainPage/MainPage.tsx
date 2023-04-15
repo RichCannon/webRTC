@@ -2,17 +2,18 @@ import { useState, useEffect, useRef, useContext, memo } from 'react'
 import { useHistory } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
 
-import Modal from '../../components/Modal/Modal'
-import CreateRoomModal from '../../components/CreateRoomModal/CreateRoomModal'
-import ACTIONS from '../../common/socket/actions'
-import { userActions } from '../../logic/userLogic/userReducer'
-import { SocketContext } from '../../hooks/useSocket'
-import * as Styled from './MainPagesStyles'
-import { MyButton } from '../../components/MyButton/MyButton'
-import { createRoomSelector } from '../../logic/roomLogic/roomSelector'
+import Modal from '@/components/Modal/Modal'
+import CreateRoomModal from '@/components/CreateRoomModal/CreateRoomModal'
+import { MyButton } from '@/components/MyButton/MyButton'
+import ACTIONS from '@/common/socket/actions'
+import { userActions } from '@/logic/userLogic/userReducer'
+import { SocketContext } from '@/hooks/useSocket'
+import { createRoomSelector } from '@/logic/roomLogic/roomSelector'
 import RoomList from './components/RoomList/RoomList'
-import { USER_LOCAL_STORAGE_NAME } from '../../hooks/constants'
-import { roomActions } from '../../logic/roomLogic/roomReducer'
+import { USER_LOCAL_STORAGE_NAME } from '@/hooks/constants'
+import { roomActions } from '@/logic/roomLogic/roomReducer'
+
+import * as Styled from './MainPagesStyles'
 
 export type RoomT = {
    id: string

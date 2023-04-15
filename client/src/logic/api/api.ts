@@ -1,4 +1,4 @@
-import { DefaultReqErrorT } from "../../types/common"
+import { DefaultReqErrorT } from "@/types/common"
 import {
    DefaultAPIInstanceT,
    FetchInstanceParamsT,

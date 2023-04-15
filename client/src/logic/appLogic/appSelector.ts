@@ -1,2 +1,3 @@
+import { RootState } from "@/App";
 
-export const showAlertSelector = state => state.app.alertData
+export const showAlertSelector = (state: RootState) => state.app.alertData

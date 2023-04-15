@@ -1,19 +1,19 @@
 import { Link } from 'react-router-dom'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router'
 
-import { userActions } from '../../logic/userLogic/userReducer'
-import { MyButton } from '../../components/MyButton/MyButton'
+import { userActions } from '@/logic/userLogic/userReducer'
+import { MyButton } from '@/components/MyButton/MyButton'
 import * as Styled from './LoginPageStyles'
-import { MyInput } from '../../components/MyInput/MyInput'
-import { myUserDataSelector } from '../../logic/userLogic/userSelector'
-import { validators } from '../../utils/validators'
+import { MyInput } from '@/components/MyInput/MyInput'
+import { myUserDataSelector } from '@/logic/userLogic/userSelector'
+import { validators } from '@/utils/validators'
 import { useEffect } from 'react'
-import { appActions } from '../../logic/appLogic/appReducer'
+import { appActions } from '@/logic/appLogic/appReducer'
 import { INIT_INPUT_LOGIN_VALUES } from './constants'
-import { validFormCheck } from '../../utils/utils'
-import { OnChangeT, OnClickT, OnSubmitT } from '../../types/common'
+import { validFormCheck } from '@/utils/utils'
+import { OnChangeT, OnClickT, OnSubmitT } from '@/types/common'
 
 
 

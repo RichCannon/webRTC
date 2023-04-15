@@ -9,7 +9,7 @@ export const isEmptyObject = (obj: object) => {
     return true;
 }
 
-export const isEmptyObjectValues = (obj: object) => {
+export const isEmptyObjectValues = <T extends object>(obj: T) => {
     for (let key in obj) {
         if (obj[key]) return false
     }
